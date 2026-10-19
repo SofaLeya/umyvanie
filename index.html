@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Уход за лицом</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Prata&display=swap">
+<style>
+/* Layout: одна колонка — этап курса, утро, вечер, трекер адапалена */
+:root{
+  --bg:#f3f5f2; --surface:#ffffff; --fg:#1f2a26; --muted:#66736d; --line:#dde3df;
+  --accent:#2f7d62; --accent-soft:#e2f0ea; --warn:#9a6a12; --warn-soft:#f6ecd8;
+  --display:"Prata", Georgia, serif; --body:"Golos Text", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141a18; --surface:#1c2421; --fg:#e6ece9; --muted:#97a39e; --line:#2e3935;
+  --accent:#6cc4a2; --accent-soft:#1f3a30; --warn:#e2b45c; --warn-soft:#3a2f1a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a18; --surface:#1c2421; --fg:#e6ece9; --muted:#97a39e; --line:#2e3935;
+  --accent:#6cc4a2; --accent-soft:#1f3a30; --warn:#e2b45c; --warn-soft:#3a2f1a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--body);padding-inline:16px;padding-block:24px 48px}
+.wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+header{display:flex;flex-direction:column;gap:4px}
+h1{font:400 2rem/1.15 var(--display);margin:0;text-wrap:balance}
+.date{color:var(--muted);font-size:.95rem}
+.phase{background:var(--accent-soft);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.phase .big{font-weight:600}
+.phase .note{color:var(--fg);opacity:.8}
+section{display:flex;flex-direction:column;gap:10px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+h2{font:400 1.45rem/1.2 var(--display);margin:0}
+.count{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.count.done{color:var(--accent);font-weight:600}
+ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+ol li:not([hidden]) ~ li:not([hidden]){border-top:1px solid var(--line)}
+.step{display:grid;grid-template-columns:26px 1fr;gap:12px;padding:14px 16px;cursor:pointer;align-items:start}
+.step:hover{background:var(--accent-soft)}
+.step input{appearance:none;width:24px;height:24px;margin:1px 0 0;border:2px solid var(--muted);border-radius:7px;display:grid;place-content:center;cursor:pointer;background:var(--surface)}
+.step input::after{content:"";width:12px;height:7px;border-left:2.5px solid var(--surface);border-bottom:2.5px solid var(--surface);transform:rotate(-45deg) translate(1px,-1px);opacity:0}
+.step input:checked{background:var(--accent);border-color:var(--accent)}
+.step input:checked::after{opacity:1}
+input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.txt{min-width:0;display:flex;flex-direction:column;gap:2px}
+.name{font-weight:600}
+.prod{font-size:.85rem;color:var(--accent)}
+.note{font-size:.85rem;color:var(--muted)}
+.step input:checked + .txt .name{text-decoration:line-through;text-decoration-color:var(--muted);color:var(--muted)}
+.wait{padding:8px 16px 8px 54px;font-size:.82rem;color:var(--muted);background:var(--bg)}
+.tag{display:inline-block;font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--warn-soft);color:var(--warn);margin-left:6px;vertical-align:2px}
+.waitstep{display:flex;align-items:center;gap:8px;padding-right:16px;background:var(--bg)}
+.waitstep .step{flex:1;min-width:0}
+.timer{flex:none;background:var(--surface);border:1px solid var(--line);color:var(--accent);font:inherit;font-size:.85rem;font-weight:600;padding:6px 10px;border-radius:8px;cursor:pointer;font-variant-numeric:tabular-nums}
+.timer.running{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+.rest{opacity:.6}
+.track{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.track h3{margin:0;font-size:1rem;font-weight:600}
+.days{display:grid;grid-template-columns:repeat(14,1fr);gap:4px}
+.day{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.7rem;color:var(--muted)}
+.day.past{cursor:pointer}
+.day.past:hover .dot{border-color:var(--accent)}
+.dot{width:100%;max-width:22px;aspect-ratio:1;border-radius:50%;border:1.5px solid var(--line)}
+.dot.on{background:var(--accent);border-color:var(--accent)}
+.day.today .dot{outline:2px solid var(--fg);outline-offset:1px}
+.rules{font-size:.88rem;color:var(--muted);margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.reset{background:none;border:1px solid var(--line);color:var(--muted);font:inherit;font-size:.85rem;padding:6px 12px;border-radius:8px;cursor:pointer}
+.reset:hover{color:var(--fg);border-color:var(--muted)}
+body{margin:0}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Уход за лицом</h1>
+    <div class="date" id="date"></div>
+  </header>
+
+  <div class="phase">
+    <span class="big" id="phase-title"></span>
+    <span class="note" id="phase-note"></span>
+  </div>
+
+  <section>
+    <div class="sec-head"><h2>Утро</h2><span class="count" id="c-am"></span></div>
+    <ol>
+      <li><label class="step"><input type="checkbox" id="am-wash" data-g="am"><span class="txt"><span class="name">Умыться</span><span class="prod">SaliZink на лоб и нос, Kora на щёки и подбородок</span><span class="note">Когда Kora закончится, на щёки и подбородок Aravia Galactomyces.</span></span></label></li>
+      <li id="lotion-li"><label class="step"><input type="checkbox" id="am-lotion" data-g="am" data-opt="1"><span class="txt"><span class="name">Лосьон на лоб и нос <span class="tag">через день</span></span><span class="prod">SaliZink лосьон</span><span class="note">Только на лоб и нос, щёки не трогать.</span></span></label></li>
+      <li><label class="step"><input type="checkbox" id="am-serum" data-g="am"><span class="txt"><span class="name">Сыворотка на лоб и нос</span><span class="prod">Librederm Seracin</span><span class="note">С серой и цинком, щёки и подбородок пропускай.</span></span></label></li>
+      <li><label class="step"><input type="checkbox" id="am-cream" data-g="am"><span class="txt"><span class="name">Крем на всё лицо</span><span class="prod">Fito гиалуроновый</span><span class="note">На шелушащиеся места можно Cerafavit.</span></span></label></li>
+      <li><label class="step"><input type="checkbox" id="am-spf" data-g="am" data-opt="1"><span class="txt"><span class="name">SPF, если выходишь на улицу <span class="tag">необяз.</span></span><span class="note">Дома не нужен, если не сидишь у окна на солнце.</span></span></label></li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Вечер</h2><span class="count" id="c-pm"></span></div>
+    <ol>
+      <li><label class="step"><input type="checkbox" id="pm-wash" data-g="pm"><span class="txt"><span class="name">Умыться</span><span class="prod">Aravia Galactomyces Therapy</span><span class="note">Без SaliZink.</span></span></label></li>
+      <li class="ad-only waitstep"><label class="step"><input type="checkbox" id="pm-wait1" data-g="pm"><span class="txt"><span class="name">Подождать 5–10 минут</span><span class="note">Промокни полотенцем, кожа должна стать полностью сухой.</span></span></label><button class="timer" type="button" data-for="pm-wait1" data-min="5">Таймер 5 мин</button></li>
+      <li><label class="step"><input type="checkbox" id="pm-buffer" data-g="pm"><span class="txt"><span class="name">Крем на щёки и подбородок</span><span class="prod">Librederm Cerafavit</span><span class="note" id="buffer-note">Буфер от шелушения. Лоб и нос не трогать.</span></span></label></li>
+      <li class="ad-only waitstep"><label class="step"><input type="checkbox" id="pm-wait2" data-g="pm"><span class="txt"><span class="name">Подождать 5 минут</span><span class="note">Пока крем впитается и перестанет скользить.</span></span></label><button class="timer" type="button" data-for="pm-wait2" data-min="5">Таймер 5 мин</button></li>
+      <li id="ad-li"><label class="step"><input type="checkbox" id="pm-adapalene" data-g="pm"><span class="txt"><span class="name" id="ad-name">Адапален на всё лицо</span><span class="prod">Дифферин крем 0,1%</span><span class="note">Горошина на всё лицо, тонким слоем. Мимо глаз, губ и складок у крыльев носа.</span></span></label></li>
+      <li><label class="step"><input type="checkbox" id="pm-dry" data-g="pm" data-opt="1"><span class="txt"><span class="name">Крем на сухие места <span class="tag">необяз.</span></span><span class="prod">Librederm Cerafavit</span><span class="note">Если что-то стянуло или шелушится.</span></span></label></li>
+    </ol>
+  </section>
+
+  <div class="track">
+    <h3>Адапален за последние 2 недели</h3>
+    <p class="note" style="margin:0">Кружок закрашивается, когда отмечаешь адапален вечером. Ошиблась в прошлом дне? Нажми на его кружок.</p>
+    <div class="days" id="days"></div>
+  </div>
+
+  <ul class="rules">
+    <li>Первые 3 недели адапален через день, потом каждый вечер, если кожа спокойная.</li>
+    <li>Если щёки шелушатся, мажь их адапаленом 2–3 раза в неделю, а лоб и нос каждый раз.</li>
+    <li>Вечером без SaliZink, кислот и скрабов.</li>
+    <li>Первые 2–4 недели может быть обострение, это нормально. Результат через 2–3 месяца.</li>
+    <li>Галочки сбрасываются каждый день в 5 утра.</li>
+  </ul>
+
+  <div class="btns">
+    <button class="reset" id="reset" type="button">Снять все галочки за сегодня</button>
+    <button class="reset" id="restart" type="button">Начать курс заново</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const PREFIX = "skin:", SHIFT = 5*3600*1000, DAY = 86400000;
+  function dayKey(t){
+    const x = new Date(t - SHIFT);
+    return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");
+  }
+  function load(k){ try{ return JSON.parse(localStorage.getItem(PREFIX+k)) || {}; }catch(e){ return {}; } }
+  function save(k,v){ try{ localStorage.setItem(PREFIX+k, JSON.stringify(v)); }catch(e){} }
+  function getStart(){ try{ return localStorage.getItem(PREFIX+"start"); }catch(e){ return null; } }
+  function setStart(v){ try{ v ? localStorage.setItem(PREFIX+"start", v) : localStorage.removeItem(PREFIX+"start"); }catch(e){} }
+  function daysBetween(a,b){ return Math.round((Date.parse(b)-Date.parse(a))/DAY); }
+
+  let today = dayKey(Date.now());
+  let state = load(today);
+  const boxes = [...document.querySelectorAll(".step input")];
+
+  function render(){
+    document.getElementById("date").textContent = new Date(Date.now()-SHIFT).toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
+    const start = getStart();
+    const n = start ? daysBetween(start, today) + 1 : 0;  // день курса, 0 = ещё не начат
+    const yesterdayAd = !!load(dayKey(Date.now()-DAY))["pm-adapalene"];
+    const everyOther = n <= 21;
+    const rest = everyOther && n > 0 && yesterdayAd && !state["pm-adapalene"];
+
+    // этап
+    const t = document.getElementById("phase-title"), pn = document.getElementById("phase-note");
+    if(!start){ t.textContent = "Сегодня первый вечер с адапаленом"; pn.textContent = "Первые 3 недели наносишь через день. Лосьон SaliZink пока откладываешь."; }
+    else if(n <= 21){ t.textContent = "День "+n+" · адапален через день"; pn.textContent = rest ? "Вчера был адапален, сегодня вечером отдых." : "Сегодня вечером адапален."; }
+    else if(n <= 30){ t.textContent = "День "+n+" · можно каждый вечер"; pn.textContent = "Если кожа спокойная, мажь каждый вечер. Если шелушится, оставайся на через день."; }
+    else { t.textContent = "День "+n+" · кожа привыкла"; pn.textContent = "Адапален каждый вечер. Лосьон SaliZink можно вернуть на лоб и нос через день."; }
+
+    // лосьон только с 31-го дня
+    document.getElementById("lotion-li").hidden = !(n > 30);
+    // вечер в день отдыха
+    document.getElementById("ad-li").classList.toggle("rest", rest);
+    document.getElementById("ad-name").textContent = rest ? "Адапален: сегодня отдых" : "Адапален на всё лицо";
+    document.querySelectorAll(".ad-only").forEach(el => el.hidden = rest);
+    document.getElementById("buffer-note").textContent = rest ? "Сегодня без адапалена, просто увлажнить." : "Буфер от шелушения. Лоб и нос не трогать.";
+
+    boxes.forEach(b => b.checked = !!state[b.id]);
+    ["am","pm"].forEach(g=>{
+      const req = boxes.filter(b => b.dataset.g===g && !b.dataset.opt && !b.closest("li").hidden && !(rest && b.id==="pm-adapalene"));
+      const k = req.filter(b=>b.checked).length;
+      const el = document.getElementById("c-"+g);
+      el.textContent = k===req.length ? "готово" : k+" из "+req.length;
+      el.classList.toggle("done", k===req.length);
+    });
+
+    const wrap = document.getElementById("days"); wrap.innerHTML = "";
+    for(let i=13;i>=0;i--){
+      const ts = Date.now() - i*DAY, d = new Date(ts - SHIFT);
+      const on = !!(i===0 ? state["pm-adapalene"] : load(dayKey(ts))["pm-adapalene"]);
+      const el = document.createElement("div");
+      el.className = "day"+(i===0?" today":"");
+      el.innerHTML = '<span class="dot'+(on?" on":"")+'"></span><span>'+(i===0?"сег":["вс","пн","вт","ср","чт","пт","сб"][d.getDay()])+'</span>';
+      el.title = d.toLocaleDateString("ru-RU",{day:"numeric",month:"long"})+(on?": адапален был":": без адапалена");
+      if(i>0){
+        el.classList.add("past");
+        el.setAttribute("role","button"); el.tabIndex=0;
+        const k = dayKey(ts);
+        const toggle = ()=>{ const st = load(k); st["pm-adapalene"] = !st["pm-adapalene"]; save(k, st); render(); };
+        el.addEventListener("click", toggle);
+        el.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggle(); } });
+      }
+      wrap.appendChild(el);
+    }
+  }
+
+  function syncDay(){ const k = dayKey(Date.now()); if(k!==today){ today=k; state=load(k); } }
+  boxes.forEach(b => b.addEventListener("change", ()=>{
+    syncDay();
+    state[b.id]=b.checked; save(today,state);
+    if(b.id==="pm-adapalene" && b.checked && !getStart()) setStart(today);
+    render();
+  }));
+  document.getElementById("reset").addEventListener("click", ()=>{ state={}; save(today,state); render(); });
+  const rs = document.getElementById("restart");
+  rs.addEventListener("click", ()=>{
+    if(rs.dataset.armed){ setStart(null); delete rs.dataset.armed; rs.textContent="Начать курс заново"; render(); return; }
+    rs.dataset.armed="1"; rs.textContent="Точно? Нажми ещё раз";
+    setTimeout(()=>{ delete rs.dataset.armed; rs.textContent="Начать курс заново"; }, 4000);
+  });
+  document.addEventListener("visibilitychange", ()=>{ syncDay(); render(); });
+
+  // таймеры ожидания
+  document.querySelectorAll(".timer").forEach(btn=>{
+    let iv=null;
+    const label = btn.textContent;
+    btn.addEventListener("click", ()=>{
+      if(iv){ clearInterval(iv); iv=null; btn.classList.remove("running"); btn.textContent=label; return; }
+      const end = Date.now() + (+btn.dataset.min)*60000;
+      btn.classList.add("running");
+      const tick = ()=>{
+        const left = Math.max(0, Math.round((end-Date.now())/1000));
+        btn.textContent = Math.floor(left/60)+":"+String(left%60).padStart(2,"0");
+        if(left<=0){
+          clearInterval(iv); iv=null; btn.classList.remove("running"); btn.textContent="Готово";
+          const box = document.getElementById(btn.dataset.for);
+          if(!box.checked){ box.checked=true; box.dispatchEvent(new Event("change")); }
+          try{ navigator.vibrate && navigator.vibrate([300,150,300]); }catch(e){}
+          try{ const c=new (window.AudioContext||window.webkitAudioContext)(), o=c.createOscillator(), g=c.createGain(); o.frequency.value=880; o.connect(g); g.connect(c.destination); g.gain.setValueAtTime(.2,c.currentTime); g.gain.exponentialRampToValueAtTime(.001,c.currentTime+1); o.start(); o.stop(c.currentTime+1); }catch(e){}
+          setTimeout(()=>{ btn.textContent=label; }, 5000);
+        }
+      };
+      tick(); iv=setInterval(tick, 1000);
+    });
+  });
+  render();
+})();
+</script>
+
+</body>
+</html>
