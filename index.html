@@ -139,8 +139,22 @@ body{margin:0}
   }
   function load(k){ try{ return JSON.parse(localStorage.getItem(PREFIX+k)) || {}; }catch(e){ return {}; } }
   function save(k,v){ try{ localStorage.setItem(PREFIX+k, JSON.stringify(v)); }catch(e){} }
-  function getStart(){ try{ return localStorage.getItem(PREFIX+"start"); }catch(e){ return null; } }
-  function setStart(v){ try{ v ? localStorage.setItem(PREFIX+"start", v) : localStorage.removeItem(PREFIX+"start"); }catch(e){} }
+  function getStart(){
+    // начало курса = самый ранний отмеченный адапален (после последнего «Начать заново»)
+    let best = null;
+    try{
+      const from = localStorage.getItem(PREFIX+"reset") || "";
+      for(let i=0;i<localStorage.length;i++){
+        const key = localStorage.key(i);
+        const m = key && key.match(/^skin:(\d{4}-\d{2}-\d{2})$/);
+        if(!m || m[1] < from) continue;
+        let v = {}; try{ v = JSON.parse(localStorage.getItem(key)) || {}; }catch(e){}
+        if(v["pm-adapalene"] && (!best || m[1] < best)) best = m[1];
+      }
+    }catch(e){}
+    return best;
+  }
+  function setStart(v){ try{ if(v===null) localStorage.setItem(PREFIX+"reset", today); }catch(e){} }
   function daysBetween(a,b){ return Math.round((Date.parse(b)-Date.parse(a))/DAY); }
 
   let today = dayKey(Date.now());
@@ -203,7 +217,6 @@ body{margin:0}
   boxes.forEach(b => b.addEventListener("change", ()=>{
     syncDay();
     state[b.id]=b.checked; save(today,state);
-    if(b.id==="pm-adapalene" && b.checked && !getStart()) setStart(today);
     render();
   }));
   document.getElementById("reset").addEventListener("click", ()=>{ state={}; save(today,state); render(); });
