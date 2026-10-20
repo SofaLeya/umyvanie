@@ -92,7 +92,8 @@ body{margin:0}
     <ol>
       <li><label class="step"><input type="checkbox" id="am-wash" data-g="am"><span class="txt"><span class="name">Умыться</span><span class="prod">SaliZink на лоб и нос, Kora на щёки и подбородок</span><span class="note">Когда Kora закончится, на щёки и подбородок Aravia Galactomyces.</span></span></label></li>
       <li id="lotion-li"><label class="step"><input type="checkbox" id="am-lotion" data-g="am" data-opt="1"><span class="txt"><span class="name">Лосьон на лоб и нос <span class="tag">через день</span></span><span class="prod">SaliZink лосьон</span><span class="note">Только на лоб и нос, щёки не трогать.</span></span></label></li>
-      <li><label class="step"><input type="checkbox" id="am-eye" data-g="am"><span class="txt"><span class="name">Крем для век</span><span class="prod" id="eye-am-prod"></span><span class="note" id="eye-am-note"></span></span></label></li>
+      <li><label class="step"><input type="checkbox" id="am-brow" data-g="am"><span class="txt"><span class="name">Сыворотка на брови</span><span class="prod">Almea</span><span class="note">Только брови, ресницы утром не нужно. Если краситься, за 20 минут до макияжа.</span></span></label></li>
+      <li><label class="step"><input type="checkbox" id="am-eye" data-g="am"><span class="txt"><span class="name">Крем для век</span><span class="prod">Clean+ Total Repair</span><span class="note">Когда закончится, Vivienne Sabo. По косточке под глазом, не у самых ресниц.</span></span></label></li>
       <li><label class="step"><input type="checkbox" id="am-serum" data-g="am"><span class="txt"><span class="name">Сыворотка на лоб и нос</span><span class="prod">Librederm Seracin</span><span class="note">С серой и цинком, щёки и подбородок пропускай.</span></span></label></li>
       <li><label class="step"><input type="checkbox" id="am-cream" data-g="am"><span class="txt"><span class="name">Крем на всё лицо</span><span class="prod">Fito гиалуроновый</span><span class="note">На шелушащиеся места можно Cerafavit.</span></span></label></li>
       <li><label class="step"><input type="checkbox" id="am-spf" data-g="am" data-opt="1"><span class="txt"><span class="name">SPF, если выходишь на улицу <span class="tag">необяз.</span></span><span class="note">Дома не нужен, если не сидишь у окна на солнце.</span></span></label></li>
@@ -103,7 +104,7 @@ body{margin:0}
     <div class="sec-head"><h2>Вечер</h2><span class="count" id="c-pm"></span></div>
     <ol>
       <li><label class="step"><input type="checkbox" id="pm-wash" data-g="pm"><span class="txt"><span class="name">Умыться</span><span class="prod">Aravia Galactomyces Therapy</span><span class="note">Без SaliZink.</span></span></label></li>
-      <li><label class="step"><input type="checkbox" id="pm-eye" data-g="pm" data-opt="1"><span class="txt"><span class="name">Крем для век <span class="tag">необяз.</span></span><span class="prod">Clean+ Total Repair</span><span class="note">Сразу после умывания. Если веки сохнут, наноси каждый вечер.</span></span></label></li>
+      <li><label class="step"><input type="checkbox" id="pm-lash" data-g="pm"><span class="txt"><span class="name">Сыворотка для ресниц и бровей</span><span class="prod">Almea</span><span class="note">Тонкая линия по росту верхних ресниц (нижние не трогать) и на брови. На чистую сухую кожу, минимум за 20 минут до сна.</span></span></label></li>
       <li class="ad-only waitstep"><label class="step"><input type="checkbox" id="pm-wait1" data-g="pm"><span class="txt"><span class="name">Подождать 5–10 минут</span><span class="note">Промокни полотенцем, кожа должна стать полностью сухой.</span></span></label><button class="timer" type="button" data-for="pm-wait1" data-min="5">Таймер 5 мин</button></li>
       <li><label class="step"><input type="checkbox" id="pm-buffer" data-g="pm"><span class="txt"><span class="name">Крем на щёки и подбородок</span><span class="prod">Librederm Cerafavit</span><span class="note" id="buffer-note">Буфер от шелушения. Лоб и нос не трогать.</span></span></label></li>
       <li class="ad-only waitstep"><label class="step"><input type="checkbox" id="pm-wait2" data-g="pm"><span class="txt"><span class="name">Подождать 5 минут</span><span class="note">Пока крем впитается и перестанет скользить.</span></span></label><button class="timer" type="button" data-for="pm-wait2" data-min="5">Таймер 5 мин</button></li>
@@ -186,9 +187,6 @@ body{margin:0}
     document.querySelectorAll(".ad-only").forEach(el => el.hidden = rest);
     document.getElementById("buffer-note").textContent = rest ? "Сегодня без адапалена, просто увлажнить." : "Буфер от шелушения. Лоб и нос не трогать.";
 
-    const vs = today >= "2026-10-22";
-    document.getElementById("eye-am-prod").textContent = vs ? "Vivienne Sabo с бакучиолом" : "Clean+ Total Repair";
-    document.getElementById("eye-am-note").textContent = vs ? "По косточке под глазом, не у самых ресниц." : "С 22 октября переходишь на Vivienne Sabo.";
     boxes.forEach(b => b.checked = !!state[b.id]);
     ["am","pm"].forEach(g=>{
       const req = boxes.filter(b => b.dataset.g===g && !b.dataset.opt && !b.closest("li").hidden && !(rest && b.id==="pm-adapalene"));
