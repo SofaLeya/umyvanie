@@ -58,6 +58,9 @@ input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .timer{flex:none;background:var(--surface);border:1px solid var(--line);color:var(--accent);font:inherit;font-size:.85rem;font-weight:600;padding:6px 10px;border-radius:8px;cursor:pointer;font-variant-numeric:tabular-nums}
 .timer.running{background:var(--accent);color:var(--surface);border-color:var(--accent)}
 .rest{opacity:.6}
+.rest .step{cursor:default}
+.rest .step:hover{background:none}
+.rest .step input{cursor:default;border-style:dashed}
 .track{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .track h3{margin:0;font-size:1rem;font-weight:600}
 .days{display:grid;grid-template-columns:repeat(14,1fr);gap:4px}
@@ -183,6 +186,7 @@ body{margin:0}
     document.getElementById("lotion-li").hidden = !(n > 30);
     // вечер в день отдыха
     document.getElementById("ad-li").classList.toggle("rest", rest);
+    document.getElementById("pm-adapalene").disabled = rest;
     document.getElementById("ad-name").textContent = rest ? "Адапален: сегодня отдых" : "Адапален на всё лицо";
     document.querySelectorAll(".ad-only").forEach(el => el.hidden = rest);
     document.getElementById("buffer-note").textContent = rest ? "Сегодня без адапалена, просто увлажнить." : "Буфер от шелушения. Лоб и нос не трогать.";
