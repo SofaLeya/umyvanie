@@ -63,7 +63,7 @@ input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .where[aria-expanded="true"]::after{content:"▴"}
 .facebox[hidden]{display:none}
 .facebox{display:flex;align-items:center;gap:14px;margin-top:6px}
-.face{width:118px;height:140px;flex:none;background:var(--paper);border-radius:12px;border:1px solid var(--line)}
+.face{width:118px;height:142px;flex:none;background:#fff;border-radius:12px;border:1px solid var(--line)}
 .face .skin{fill:var(--paper)}
 .face .ln{fill:none;stroke:var(--ink);stroke-width:.75;stroke-linecap:round;stroke-linejoin:round}
 .face .lt{fill:none;stroke:var(--ink);stroke-width:.45;stroke-linecap:round;opacity:.7}
@@ -71,7 +71,7 @@ input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .face .pu{fill:var(--ink)}
 .face .z1{fill:var(--accent);opacity:.42}
 .face .z2{fill:#c9932f;opacity:.45}
-.face .hl{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round;opacity:.75}
+.face .hl{fill:none;stroke:var(--accent);stroke-width:13;stroke-linecap:round;opacity:.7}
 .legend{display:flex;flex-direction:column;gap:6px;font-size:.8rem;color:var(--muted)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
 .rest{opacity:.6}
@@ -308,26 +308,26 @@ body{margin:0}
     });
   });
 
-  // схемы лица под раскрывашкой
+  // схемы лица под раскрывашкой (рисунок: face.png, 1024×1024)
   (function(){
     let n=0;
-    const FACE='M50 15 C69 15 79 30 79 50 C79 70 70 86 58 94 C54 96.5 46 96.5 42 94 C30 86 21 70 21 50 C21 30 31 15 50 15 Z';
+    const FACE='M358 302 C380 255 440 205 512 194 C584 205 644 255 666 302 L670 332 C672 400 668 465 655 500 C640 555 600 608 562 630 C540 641 484 641 462 630 C424 608 384 555 369 500 C356 465 352 400 354 332 Z';
     const P={
-      forehead:'<path d="M22.5 41.5 C24.5 27 35 19.5 47 20.5 C49 20.7 50.5 21.6 51.5 22.8 C53.5 21 57 20.2 60 20.8 C70.5 23 76.5 31 77.5 41.5 Z"/>',
-      hair:'<path d="M8 2 L92 2 L92 41 L77.5 41 C76.5 31 70.5 23 60 20.8 C57 20.2 53.5 21 51.5 22.8 C50.5 21.6 49 20.7 47 20.5 C35 19.5 24.5 27 22.5 41 L8 41 Z"/>',
-      nose:'<path d="M46 52 L54 52 L57.5 70 Q50 73.5 42.5 70 Z"/>',
-      cheeks:'<ellipse cx="32" cy="68" rx="9.5" ry="8.5"/><ellipse cx="68" cy="68" rx="9.5" ry="8.5"/>',
-      chin:'<ellipse cx="50" cy="91" rx="10" ry="5.5"/>',
-      eyes:'<ellipse cx="37" cy="52.5" rx="8.5" ry="5.5"/><ellipse cx="63" cy="52.5" rx="8.5" ry="5.5"/>',
-      lips:'<ellipse cx="50" cy="79.5" rx="10.5" ry="5"/>',
-      folds:'<circle cx="43.5" cy="70.5" r="3.4"/><circle cx="56.5" cy="70.5" r="3.4"/>'
+      hair:'',
+      forehead:'<path d="M358 302 C380 255 440 205 512 194 C584 205 644 255 666 302 L670 336 L354 336 Z"/>',
+      nose:'<path d="M495 402 L529 402 L550 505 Q512 516 474 505 Z"/>',
+      cheeks:'<ellipse cx="418" cy="480" rx="44" ry="38"/><ellipse cx="606" cy="480" rx="44" ry="38"/>',
+      chin:'<ellipse cx="512" cy="611" rx="44" ry="20"/>',
+      eyes:'<ellipse cx="430" cy="393" rx="56" ry="26"/><ellipse cx="594" cy="393" rx="56" ry="26"/>',
+      lips:'<ellipse cx="512" cy="555" rx="62" ry="25"/>',
+      folds:'<circle cx="471" cy="505" r="12"/><circle cx="553" cy="505" r="12"/>'
     };
     function masked(cls,holes){const id='fm'+(++n);
       return '<mask id="'+id+'"><path d="'+FACE+'" fill="#fff"/><g fill="#000">'+P.hair+holes.map(h=>P[h]).join('')+'</g></mask><path class="'+cls+'" d="'+FACE+'" mask="url(#'+id+')"/>';}
     function clip(cls,inner){const id='fc'+(++n);
       return '<clipPath id="'+id+'"><path d="'+FACE+'"/></clipPath><g class="'+cls+'" clip-path="url(#'+id+')">'+inner+'</g>';}
-    const browL='M29.5 46 Q37 40.5 44.5 45', browR='M55.5 45 Q63 40.5 70.5 46';
-    const lashL='M30.5 52.6 Q37 47.6 43.5 52.6', lashR='M56.5 52.6 Q63 47.6 69.5 52.6';
+    const browL='M372 362 Q425 340 478 360', browR='M546 360 Q599 340 652 362';
+    const lashL='M388 390 Q430 368 470 392', lashR='M554 392 Q594 368 636 390';
     const Z={
       tzone:()=>clip('z1',P.forehead+P.nose),
       cheeks:()=>clip('z1',P.cheeks+P.chin),
@@ -335,48 +335,14 @@ body{margin:0}
       full:()=>masked('z1',['eyes','lips']),
       wash:()=>masked('z1',[]),
       adapalene:()=>masked('z1',['eyes','lips','folds']),
-      eyecream:()=>'<path class="hl" d="M29.5 59.5 Q37 64 44.5 59.5"/><path class="hl" d="M55.5 59.5 Q63 64 70.5 59.5"/><path class="hl" style="stroke-width:2.6" d="M31 48.2 Q37 45 43 47.6"/><path class="hl" style="stroke-width:2.6" d="M57 47.6 Q63 45 69 48.2"/>',
-      brows:()=>'',
-      lashbrow:()=>''
+      eyecream:()=>'<path class="hl" d="M392 421 Q430 437 470 421"/><path class="hl" d="M554 421 Q594 437 632 421"/><path class="hl" style="stroke-width:7" d="M394 375 Q430 366 466 373"/><path class="hl" style="stroke-width:7" d="M558 373 Q594 366 630 375"/>',
+      brows:()=>'<path class="hl" d="'+browL+'"/><path class="hl" d="'+browR+'"/>',
+      lashbrow:()=>'<path class="hl" d="'+browL+'"/><path class="hl" d="'+browR+'"/><path class="hl" style="stroke-width:8" d="'+lashL+'"/><path class="hl" style="stroke-width:8" d="'+lashR+'"/>'
     };
-    const top={ brows:'<path class="hl" d="'+browL+'"/><path class="hl" d="'+browR+'"/>',
-      lashbrow:'<path class="hl" d="'+browL+'"/><path class="hl" d="'+browR+'"/><path class="hl" style="stroke-width:2.2" d="'+lashL+'"/><path class="hl" style="stroke-width:2.2" d="'+lashR+'"/>' };
     function face(z){
-      return '<svg class="face" viewBox="10 4 80 116" role="img" aria-label="Зона нанесения">'
-        // шея и плечи
-        +'<path class="skin" d="M40 88 L40 104 Q30 110 14 116 L86 116 Q70 110 60 104 L60 88 Z"/>'
-        +'<path class="ln" d="M40.5 89 C40.5 98 39 105 33 109 Q24 113 13 116"/><path class="ln" d="M59.5 89 C59.5 98 61 105 67 109 Q76 113 87 116"/>'
-        // уши
-        +'<path class="skin" d="M21.5 47 C16 44.5 15 54 17.5 60 C18.8 63.5 20.8 64.5 22.5 63 Z"/><path class="skin" d="M78.5 47 C84 44.5 85 54 82.5 60 C81.2 63.5 79.2 64.5 77.5 63 Z"/>'
-        +'<path class="ln" d="M21.6 47.5 C16.5 45 15.6 54 18 59.8 C19.2 62.8 21 63.8 22.4 62.6"/><path class="lt" d="M20.6 51 C18.8 51 18.6 55 20 57"/>'
-        +'<path class="ln" d="M78.4 47.5 C83.5 45 84.4 54 82 59.8 C80.8 62.8 79 63.8 77.6 62.6"/><path class="lt" d="M79.4 51 C81.2 51 81.4 55 80 57"/>'
-        // лицо
-        +'<path class="skin" d="'+FACE+'"/>'
-        +Z[z]()
-        +'<path class="ln" d="M21.4 46 C21 58 24.5 71 31 81 C35 87.5 39 92 42 94 C46 96.6 54 96.6 58 94 C61 92 65 87.5 69 81 C75.5 71 79 58 78.6 46"/>'
-        // волосы, гладко зачёсаны назад
-        +'<path class="ln" d="M21.5 47 C19 27 31 10.5 50 10 C69 10.5 81 27 78.5 47"/>'
-        +'<path class="ln" d="M22.5 41 C24.5 27 35 19.5 47 20.5 C49 20.7 50.5 21.6 51.5 22.8 C53.5 21 57 20.2 60 20.8 C70.5 23 76.5 31 77.5 41"/>'
-        +'<path class="lt" d="M28 22 C33 15 42 12.6 50 13.4 M51.5 22.8 C54 16.8 61 13.6 68 15.6 M24 34 C26 26.5 31 21.6 36 19.4 M76 34 C74 26 69 20.6 63.5 18.6 M44 21 C45 16.4 48 14.4 52 14"/>'
-        // брови
-        +'<path class="br" d="M28.5 45.2 C32 41.4 38.5 40.4 44 42.3 C44.4 42.5 44.3 43.1 43.9 43.1 C38.6 42 33 42.8 29.3 45.8 Z"/>'
-        +'<path class="br" d="M71.5 45.2 C68 41.4 61.5 40.4 56 42.3 C55.6 42.5 55.7 43.1 56.1 43.1 C61.4 42 67 42.8 70.7 45.8 Z"/>'
-        // глаза
-        +'<path class="ln" d="M30.6 52.4 C33.2 49.1 40.4 48.6 43.6 52.4"/><path class="lt" d="M31.2 52.8 C34.2 54.9 40.6 54.9 43.4 52.6"/>'
-        +'<path class="lt" d="M31.6 49.6 C34.6 47 40.4 46.8 43 49.4"/>'
-        +'<circle class="ln" cx="37.2" cy="51.9" r="2.3"/><circle class="pu" cx="37.2" cy="51.9" r="1"/>'
-        +'<path class="ln" d="M69.4 52.4 C66.8 49.1 59.6 48.6 56.4 52.4"/><path class="lt" d="M68.8 52.8 C65.8 54.9 59.4 54.9 56.6 52.6"/>'
-        +'<path class="lt" d="M68.4 49.6 C65.4 47 59.6 46.8 57 49.4"/>'
-        +'<circle class="ln" cx="62.8" cy="51.9" r="2.3"/><circle class="pu" cx="62.8" cy="51.9" r="1"/>'
-        +'<path class="lt" d="M31 51.4 L29.8 50.4 M32.4 50.2 L31.6 48.9 M67.6 50.2 L68.4 48.9 M69 51.4 L70.2 50.4"/>'
-        // нос
-        +'<path class="lt" d="M46.6 50 C46.4 56 45.6 61 44.8 64.5"/>'
-        +'<path class="ln" d="M44.2 66.2 C43 67.8 44.4 69.4 46.4 68.6 C47.6 69.8 49 70 50 69.6 C51 70 52.4 69.8 53.6 68.6 C55.6 69.4 57 67.8 55.8 66.2"/>'
-        // губы
-        +'<path class="ln" d="M42.2 78.6 C44.6 77 46.8 76.2 48.6 76.8 C49.3 77 49.7 77.2 50 77.4 C50.3 77.2 50.7 77 51.4 76.8 C53.2 76.2 55.4 77 57.8 78.6"/>'
-        +'<path class="ln" d="M42.2 78.6 C46 79.8 54 79.8 57.8 78.6"/>'
-        +'<path class="ln" d="M43.4 79.2 C45.8 83 54.2 83 56.6 79.2"/><path class="lt" d="M47 85.6 C48.8 86.2 51.2 86.2 53 85.6"/>'
-        +(top[z]||'')+'</svg>';
+      return '<svg class="face" viewBox="283 100 458 550" role="img" aria-label="Зона нанесения">'
+        +'<image href="face.png" x="0" y="0" width="1024" height="1024"/>'
+        +Z[z]()+'</svg>';
     }
     const map={"am-wash":"split","am-brow":"brows","am-eye":"eyecream","am-serum":"tzone","am-cream":"full","am-spf":"full","am-lotion":"tzone",
       "pm-makeup":"wash","pm-wash":"wash","pm-lash":"lashbrow","pm-buffer":"cheeks","pm-adapalene":"adapalene","pm-dry":"cheeks"};
