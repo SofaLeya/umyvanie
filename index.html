@@ -114,7 +114,7 @@ body{margin:0}
       <li><label class="step"><input type="checkbox" id="am-wash" data-g="am"><span class="txt"><span class="name">Умыться</span><span class="prod">SaliZink на лоб и нос, Kora на щёки и подбородок</span><span class="note">Когда Kora закончится, на щёки и подбородок Aravia Galactomyces.</span></span></label></li>
       <li id="lotion-li"><label class="step"><input type="checkbox" id="am-lotion" data-g="am" data-opt="1"><span class="txt"><span class="name">Лосьон на лоб и нос <span class="tag">через день</span></span><span class="prod">SaliZink лосьон</span><span class="note">Только на лоб и нос, щёки не трогать.</span></span></label></li>
       <li><label class="step"><input type="checkbox" id="am-brow" data-g="am" data-lash="am"><span class="txt"><span class="name">Сыворотка на брови</span><span class="prod">Almea</span><span class="note">Только брови, ресницы утром не нужно. Если краситься, за 20 минут до макияжа.</span><span class="note" id="lash-am-status"></span></span></label></li>
-      <li><label class="step"><input type="checkbox" id="am-eye" data-g="am"><span class="txt"><span class="name">Крем для век</span><span class="prod">Clean+ Total Repair</span><span class="note">Когда закончится, Vivienne Sabo. По косточке под глазом, не у самых ресниц.</span></span></label></li>
+      <li><label class="step"><input type="checkbox" id="am-eye" data-g="am"><span class="txt"><span class="name">Крем для век</span><span class="prod">Clean+ Total Repair</span><span class="note">Когда закончится, Vivienne Sabo. По косточке под глазом и под бровью. Не у самых ресниц.</span></span></label></li>
       <li><label class="step"><input type="checkbox" id="am-serum" data-g="am"><span class="txt"><span class="name">Сыворотка на лоб и нос</span><span class="prod">Librederm Seracin</span><span class="note">С серой и цинком, щёки и подбородок пропускай.</span></span></label></li>
       <li><label class="step"><input type="checkbox" id="am-cream" data-g="am"><span class="txt"><span class="name">Крем на всё лицо</span><span class="prod">Fito гиалуроновый</span><span class="note">На шелушащиеся места можно Cerafavit.</span></span></label></li>
       <li><label class="step"><input type="checkbox" id="am-spf" data-g="am" data-opt="1"><span class="txt"><span class="name">SPF, если выходишь на улицу <span class="tag">необяз.</span></span><span class="prod" id="spf-prod"></span><span class="note">Дома не нужен, если не сидишь у окна на солнце.</span></span></label></li>
@@ -335,7 +335,7 @@ body{margin:0}
       full:()=>masked('z1',['eyes','lips']),
       wash:()=>masked('z1',[]),
       adapalene:()=>masked('z1',['eyes','lips','folds']),
-      eyecream:()=>'<path class="hl" d="M29.5 59.5 Q37 64 44.5 59.5"/><path class="hl" d="M55.5 59.5 Q63 64 70.5 59.5"/>',
+      eyecream:()=>'<path class="hl" d="M29.5 59.5 Q37 64 44.5 59.5"/><path class="hl" d="M55.5 59.5 Q63 64 70.5 59.5"/><path class="hl" style="stroke-width:2.6" d="M31 48.2 Q37 45 43 47.6"/><path class="hl" style="stroke-width:2.6" d="M57 47.6 Q63 45 69 48.2"/>',
       brows:()=>'',
       lashbrow:()=>''
     };
