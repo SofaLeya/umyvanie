@@ -7,30 +7,27 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#2f7d62">
+<meta name="theme-color" content="#0b0709">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Prata&display=swap">
 <style>
 /* Layout: одна колонка — этап курса, утро, вечер, трекер адапалена */
 :root{
-  --bg:#f3f5f2; --surface:#ffffff; --fg:#1f2a26; --muted:#66736d; --line:#dde3df;
-  --accent:#2f7d62; --accent-soft:#e2f0ea; --warn:#9a6a12; --warn-soft:#f6ecd8;
+  --bg:#0b0709; --surface:#170d14; --fg:#fbe9f2; --muted:#b693a7; --line:#33202c;
+  --accent:#ff4fa0; --accent-soft:#3a1430; --warn:#ffb36b; --warn-soft:#3a2416;
   --paper:#fbf8f5; --ink:#3d3531;
+  --grad:linear-gradient(135deg,#ff1f7a 0%,#ff5fae 55%,#ff9ccf 100%);
+  --grad-soft:linear-gradient(135deg,#4a1236 0%,#2a0f22 60%,#1a0b15 100%);
   --display:"Prata", Georgia, serif; --body:"Golos Text", system-ui, sans-serif;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#141a18; --surface:#1c2421; --fg:#e6ece9; --muted:#97a39e; --line:#2e3935;
-  --accent:#6cc4a2; --accent-soft:#1f3a30; --warn:#e2b45c; --warn-soft:#3a2f1a; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#141a18; --surface:#1c2421; --fg:#e6ece9; --muted:#97a39e; --line:#2e3935;
-  --accent:#6cc4a2; --accent-soft:#1f3a30; --warn:#e2b45c; --warn-soft:#3a2f1a; color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--body);padding-inline:16px;padding-block:24px 48px}
+body{background:radial-gradient(130% 55% at 50% -8%,#5a1240 0%,#2a0b1f 38%,var(--bg) 72%) fixed,var(--bg);min-height:100vh;color:var(--fg);font:16px/1.5 var(--body);padding-inline:16px;padding-block:24px 48px}
 .wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
 header{display:flex;flex-direction:column;gap:4px}
-h1{font:400 2rem/1.15 var(--display);margin:0;text-wrap:balance}
+h1{font:400 2rem/1.15 var(--display);margin:0;text-wrap:balance;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .date{color:var(--muted);font-size:.95rem}
-.phase{background:var(--accent-soft);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.phase{background:var(--grad-soft);border:1px solid #5a1a44;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
 .phase .big{font-weight:600}
 .phase .note{color:var(--fg);opacity:.8}
 section{display:flex;flex-direction:column;gap:10px}
@@ -43,8 +40,8 @@ ol li:not([hidden]) ~ li:not([hidden]){border-top:1px solid var(--line)}
 .step{display:grid;grid-template-columns:26px 1fr;gap:12px;padding:14px 16px;cursor:pointer;align-items:start}
 .step:hover{background:var(--accent-soft)}
 .step input{appearance:none;width:24px;height:24px;margin:1px 0 0;border:2px solid var(--muted);border-radius:7px;display:grid;place-content:center;cursor:pointer;background:var(--surface)}
-.step input::after{content:"";width:12px;height:7px;border-left:2.5px solid var(--surface);border-bottom:2.5px solid var(--surface);transform:rotate(-45deg) translate(1px,-1px);opacity:0}
-.step input:checked{background:var(--accent);border-color:var(--accent)}
+.step input::after{content:"";width:12px;height:7px;border-left:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:rotate(-45deg) translate(1px,-1px);opacity:0}
+.step input:checked{background:var(--grad);border-color:transparent}
 .step input:checked::after{opacity:1}
 input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .txt{min-width:0;display:flex;flex-direction:column;gap:2px}
@@ -57,7 +54,7 @@ input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .waitstep{display:flex;align-items:center;gap:8px;padding-right:16px;background:var(--bg)}
 .waitstep .step{flex:1;min-width:0}
 .timer{flex:none;background:var(--surface);border:1px solid var(--line);color:var(--accent);font:inherit;font-size:.85rem;font-weight:600;padding:6px 10px;border-radius:8px;cursor:pointer;font-variant-numeric:tabular-nums}
-.timer.running{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+.timer.running{background:var(--grad);color:#fff;border-color:transparent}
 .where{align-self:flex-start;margin-top:4px;background:none;border:0;padding:2px 0;font:inherit;font-size:.82rem;font-weight:600;color:var(--accent);cursor:pointer;display:inline-flex;align-items:center;gap:4px}
 .where::after{content:"▾";font-size:.9em;line-height:1}
 .where[aria-expanded="true"]::after{content:"▴"}
@@ -85,7 +82,7 @@ input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .day.past{cursor:pointer}
 .day.past:hover .dot{border-color:var(--accent)}
 .dot{width:100%;max-width:22px;aspect-ratio:1;border-radius:50%;border:1.5px solid var(--line)}
-.dot.on{background:var(--accent);border-color:var(--accent)}
+.dot.on{background:var(--grad);border-color:transparent}
 .day.today .dot{outline:2px solid var(--fg);outline-offset:1px}
 .rules{font-size:.88rem;color:var(--muted);margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
 .btns{display:flex;flex-wrap:wrap;gap:8px}
@@ -94,7 +91,7 @@ input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .backup .note{margin:0}
 .tgbk summary{cursor:pointer;color:var(--accent);font-weight:600}
 .tgbk .tgbk-box{margin-top:8px}
-.bk{background:var(--accent);color:var(--surface);border:0;font:inherit;font-size:.9rem;font-weight:600;padding:8px 14px;border-radius:10px;cursor:pointer}
+.bk{background:var(--grad);color:#fff;border:0;font:inherit;font-size:.9rem;font-weight:600;padding:8px 14px;border-radius:10px;cursor:pointer}
 label.bk{background:none;color:var(--accent);border:1.5px solid var(--accent)}
 .reset{background:none;border:1px solid var(--line);color:var(--muted);font:inherit;font-size:.85rem;padding:6px 12px;border-radius:8px;cursor:pointer}
 .reset:hover{color:var(--fg);border-color:var(--muted)}
@@ -371,7 +368,7 @@ body{margin:0}
       const btn=document.createElement("button");
       btn.type="button"; btn.className="where"; btn.textContent="Где наносить"; btn.setAttribute("aria-expanded","false");
       const fb=document.createElement("span"); fb.className="facebox"; fb.hidden=true;
-      fb.innerHTML=face(z)+(z==="split"?'<span class="legend"><span><i style="background:var(--accent)"></i>SaliZink</span><span><i style="background:#c9932f"></i>Kora / Aravia</span></span>':'');
+      fb.innerHTML=face(z)+(z==="split"?'<span class="legend"><span><i style="background:var(--grad)"></i>SaliZink</span><span><i style="background:#c9932f"></i>Kora / Aravia</span></span>':'');
       btn.addEventListener("click",e=>{ e.preventDefault(); e.stopPropagation(); fb.hidden=!fb.hidden; btn.setAttribute("aria-expanded", String(!fb.hidden)); });
       fb.addEventListener("click",e=>{ e.preventDefault(); e.stopPropagation(); });
       txt.append(btn, fb);
@@ -417,5 +414,6 @@ body{margin:0}
 })();
 </script>
 
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script>
 </body>
 </html>
