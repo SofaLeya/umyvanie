@@ -165,11 +165,13 @@ body{margin:0}
       <label class="bk" for="bk-file">Восстановить из файла</label>
       <input type="file" id="bk-file" accept=".json,.txt,application/json,text/plain" hidden>
     </div>
+    <details class="tgbk" open><summary>Яндекс Диск</summary><div class="ydsync-box" style="margin-top:8px"></div></details>
     <details class="tgbk"><summary>Копии в Телеграм</summary><div class="tgbk-box"></div></details>
   </section>
 </div>
 
 <script src="tgbk.js"></script>
+<script src="ydsync.js"></script>
 <script>
 (function(){
   const PREFIX = "skin:", SHIFT = 5*3600*1000, DAY = 86400000;
@@ -382,6 +384,7 @@ body{margin:0}
     function collect(){ const data={};
       try{ for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(k && k.startsWith(PREFIX) && k!==PREFIX+"lastBackup") data[k]=localStorage.getItem(k); } }catch(e){}
       return data; }
+    try{ if(window.YDS) YDS.init({app:"umyvanie",title:"Уход",cid:"02760b58a041462481b0b3fd09c33d7b",redir:"https://sofaleya.github.io/umyvanie/",prefix:PREFIX,exclude:[PREFIX+"lastBackup"],accent:"#ff4fa0",accentText:"#fff"}); }catch(e){}
     try{ if(window.TGBK) TGBK.init({app:"umyvanie",title:"Уход",accent:"var(--accent)",accentText:"var(--bg)",
       file:d=>"uhod-kopiya-"+d+".json",
       data:()=>{ const data=collect(); return Object.keys(data).length? JSON.stringify({app:"umyvanie",v:1,data},null,1) : ""; }}); }catch(e){}
