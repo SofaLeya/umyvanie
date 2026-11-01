@@ -80,13 +80,20 @@ input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .rest .step input{cursor:default;border-style:dashed}
 .track{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .track h3{margin:0;font-size:1rem;font-weight:600}
-.days{display:grid;grid-template-columns:repeat(14,1fr);gap:4px}
-.day{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.7rem;color:var(--muted)}
+.cal-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cal-head h3{margin:0;font-size:1rem;font-weight:600;text-align:center;flex:1}
+.cal-nav{background:none;border:1px solid var(--line);color:var(--fg);font:inherit;font-size:1.1rem;line-height:1;width:34px;height:34px;border-radius:10px;cursor:pointer}
+.cal-nav:disabled{opacity:.3;cursor:default}
+.cal-wd,.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+.cal-wd span{font-size:.72rem;color:var(--muted)}
+.cal-wd span:nth-child(n+6){color:var(--accent)}
+.day{display:flex;justify-content:center}
+.dot{width:100%;max-width:36px;aspect-ratio:1;border-radius:50%;border:1.5px solid var(--line);display:grid;place-content:center;font-size:.8rem;color:var(--fg);font-variant-numeric:tabular-nums}
+.dot.on{background:var(--grad);border-color:transparent;color:#fff;font-weight:600}
 .day.past{cursor:pointer}
 .day.past:hover .dot{border-color:var(--accent)}
-.dot{width:100%;max-width:22px;aspect-ratio:1;border-radius:50%;border:1.5px solid var(--line)}
-.dot.on{background:var(--grad);border-color:transparent}
-.day.today .dot{outline:2px solid var(--fg);outline-offset:1px}
+.day.future .dot{opacity:.35;border-style:dashed}
+.day.today .dot{outline:2px solid var(--fg);outline-offset:2px}
 .rules{font-size:.88rem;color:var(--muted);margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
 .btns{display:flex;flex-wrap:wrap;gap:8px}
 .backup{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
@@ -142,9 +149,14 @@ body{margin:0}
   </section>
 
   <div class="track">
-    <h3>Адапален за последние 2 недели</h3>
-    <p class="note" style="margin:0">Кружок закрашивается, когда отмечаешь адапален вечером. Ошиблась в прошлом дне? Нажми на его кружок.</p>
+    <div class="cal-head">
+      <button type="button" class="cal-nav" id="cal-prev" aria-label="Предыдущий месяц">‹</button>
+      <h3 id="cal-title">Адапален</h3>
+      <button type="button" class="cal-nav" id="cal-next" aria-label="Следующий месяц">›</button>
+    </div>
+    <div class="cal-wd"><span>пн</span><span>вт</span><span>ср</span><span>чт</span><span>пт</span><span>сб</span><span>вс</span></div>
     <div class="days" id="days"></div>
+    <p class="note" style="margin:0">Закрашен день, когда был адапален. Ошиблась в прошлом дне? Нажми на него.</p>
   </div>
 
   <ul class="rules">
@@ -282,18 +294,26 @@ body{margin:0}
       el.classList.toggle("done", k===req.length);
     });
 
+    // календарь адапалена на месяц
     const wrap = document.getElementById("days"); wrap.innerHTML = "";
-    for(let i=13;i>=0;i--){
-      const ts = Date.now() - i*DAY, d = new Date(ts - SHIFT);
-      const on = !!(i===0 ? state["pm-adapalene"] : load(dayKey(ts))["pm-adapalene"]);
+    const now = new Date(Date.now()-SHIFT);
+    const vm = new Date(now.getFullYear(), now.getMonth()+calOffset, 1);
+    const title = vm.toLocaleDateString("ru-RU",{month:"long", year:"numeric"}).replace(" г.","");
+    document.getElementById("cal-title").textContent = "Адапален · "+title.charAt(0).toUpperCase()+title.slice(1);
+    document.getElementById("cal-next").disabled = calOffset>=0;
+    const lead = (vm.getDay()+6)%7, dim = new Date(vm.getFullYear(), vm.getMonth()+1, 0).getDate();
+    for(let i=0;i<lead;i++) wrap.appendChild(document.createElement("div"));
+    for(let dnum=1; dnum<=dim; dnum++){
+      const k = vm.getFullYear()+"-"+String(vm.getMonth()+1).padStart(2,"0")+"-"+String(dnum).padStart(2,"0");
+      const isToday = k===today, isFuture = k>today;
+      const on = !!(isToday ? state["pm-adapalene"] : (!isFuture && load(k)["pm-adapalene"]));
       const el = document.createElement("div");
-      el.className = "day"+(i===0?" today":"");
-      el.innerHTML = '<span class="dot'+(on?" on":"")+'"></span><span>'+(i===0?"сег":["вс","пн","вт","ср","чт","пт","сб"][d.getDay()])+'</span>';
-      el.title = d.toLocaleDateString("ru-RU",{day:"numeric",month:"long"})+(on?": адапален был":": без адапалена");
-      if(i>0){
+      el.className = "day"+(isToday?" today":"")+(isFuture?" future":"");
+      el.innerHTML = '<span class="dot'+(on?" on":"")+'">'+dnum+'</span>';
+      el.title = dnum+" · "+(on?"адапален был":"без адапалена");
+      if(!isToday && !isFuture){
         el.classList.add("past");
         el.setAttribute("role","button"); el.tabIndex=0;
-        const k = dayKey(ts);
         const toggle = ()=>{ const st = load(k); st["pm-adapalene"] = !st["pm-adapalene"]; save(k, st); render(); };
         el.addEventListener("click", toggle);
         el.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggle(); } });
@@ -302,6 +322,9 @@ body{margin:0}
     }
   }
 
+  let calOffset = 0;
+  document.getElementById("cal-prev").addEventListener("click",()=>{ calOffset--; render(); });
+  document.getElementById("cal-next").addEventListener("click",()=>{ if(calOffset<0){ calOffset++; render(); } });
   function syncDay(){ const k = dayKey(Date.now()); if(k!==today){ today=k; state=load(k); } }
   boxes.forEach(b => b.addEventListener("change", ()=>{
     syncDay();
