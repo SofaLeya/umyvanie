@@ -274,7 +274,10 @@ body{margin:0}
     })();
 
     // курс сыворотки для ресниц: 90 дней каждый день, потом пн/ср/пт вечером
-    const ls = firstDayWith(["pm-lash","am-brow"]) || (state["pm-lash"]||state["am-brow"] ? today : null);
+    // начало курса сыворотки: 21 октября 2026 (получила и начала вечером), либо более ранняя отметка
+    const LASH_START = "2026-10-21";
+    const lsMark = firstDayWith(["pm-lash","am-brow"]) || (state["pm-lash"]||state["am-brow"] ? today : null);
+    const ls = (!lsMark || LASH_START < lsMark) ? LASH_START : lsMark;
     const ln = ls ? daysBetween(ls, today) + 1 : 0;
     const maint = ln > 90;
     const wd = new Date(Date.now()-SHIFT).getDay();
