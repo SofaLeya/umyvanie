@@ -38,6 +38,14 @@ section{display:flex;flex-direction:column;gap:10px}
 h2{font:400 1.45rem/1.2 var(--display);margin:0}
 .count{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .count.done{color:var(--accent);font-weight:600}
+.sec-right{display:flex;align-items:center;gap:14px}
+.all{display:inline-flex;align-items:center;gap:7px;font-size:.85rem;color:var(--muted);cursor:pointer;user-select:none}
+.all input{appearance:none;width:20px;height:20px;margin:0;border:2px solid var(--muted);border-radius:6px;display:grid;place-content:center;cursor:pointer;background:var(--surface)}
+.all input::after{content:"";width:10px;height:6px;border-left:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:rotate(-45deg) translate(1px,-1px);opacity:0}
+.all input:checked{background:var(--grad);border-color:transparent}
+.all input:checked::after{opacity:1}
+.all input:indeterminate{background:var(--grad);border-color:transparent}
+.all input:indeterminate::after{width:10px;height:0;border-left:0;border-bottom:2.5px solid #fff;transform:none;opacity:1}
 ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 ol li:not([hidden]) ~ li:not([hidden]){border-top:1px solid var(--line)}
 .step{display:grid;grid-template-columns:26px 1fr;gap:12px;padding:14px 16px;cursor:pointer;align-items:start}
@@ -124,7 +132,7 @@ body{margin:0}
   </div>
 
   <section>
-    <div class="sec-head"><h2>Утро</h2><span class="count" id="c-am"></span></div>
+    <div class="sec-head"><h2>Утро</h2><div class="sec-right"><label class="all"><input type="checkbox" id="all-am" aria-label="Отметить всё: утро">Всё</label><span class="count" id="c-am"></span></div></div>
     <ol>
       <li><label class="step"><input type="checkbox" id="am-wash" data-g="am"><span class="txt"><span class="name">Умыться</span><span class="prod">SaliZink на лоб и нос, Kora на щёки и подбородок</span><span class="note">Когда Kora закончится, на щёки и подбородок Aravia Galactomyces.</span></span></label></li>
       <li id="lotion-li"><label class="step"><input type="checkbox" id="am-lotion" data-g="am" data-opt="1"><span class="txt"><span class="name">Лосьон на лоб и нос <span class="tag">через день</span></span><span class="prod">SaliZink лосьон</span><span class="note">Только на лоб и нос, щёки не трогать.</span></span></label></li>
@@ -137,7 +145,7 @@ body{margin:0}
   </section>
 
   <section>
-    <div class="sec-head"><h2>Вечер</h2><span class="count" id="c-pm"></span></div>
+    <div class="sec-head"><h2>Вечер</h2><div class="sec-right"><label class="all"><input type="checkbox" id="all-pm" aria-label="Отметить всё: вечер">Всё</label><span class="count" id="c-pm"></span></div></div>
     <ol>
       <li><label class="step"><input type="checkbox" id="pm-makeup" data-g="pm" data-opt="1"><span class="txt"><span class="name">Если был макияж: мицеллярка <span class="tag">необяз.</span></span><span class="note">На глаза прижать диск на 10–15 секунд, не тереть. Потом всё равно умыться.</span></span></label></li>
       <li><label class="step"><input type="checkbox" id="pm-wash" data-g="pm"><span class="txt"><span class="name">Умыться</span><span class="prod">Aravia Galactomyces Therapy</span><span class="note">Без SaliZink.</span></span></label></li>
@@ -297,6 +305,10 @@ body{margin:0}
       const el = document.getElementById("c-"+g);
       el.textContent = k===req.length ? "готово" : k+" из "+req.length;
       el.classList.toggle("done", k===req.length);
+      const vis = boxes.filter(b => b.dataset.g===g && !b.closest("li").hidden && !b.disabled);
+      const kk = vis.filter(b=>b.checked).length, m = document.getElementById("all-"+g);
+      m.checked = vis.length>0 && kk===vis.length;
+      m.indeterminate = kk>0 && kk<vis.length;
     });
 
     // календарь адапалена на месяц
@@ -336,6 +348,15 @@ body{margin:0}
     state[b.id]=b.checked; save(today,state);
     render();
   }));
+  ["am","pm"].forEach(g=>{
+    document.getElementById("all-"+g).addEventListener("change", e=>{
+      syncDay();
+      const val = e.target.checked;
+      boxes.filter(b => b.dataset.g===g && !b.closest("li").hidden && !b.disabled).forEach(b => { state[b.id]=val; });
+      save(today,state);
+      render();
+    });
+  });
   document.getElementById("reset").addEventListener("click", ()=>{ state={}; save(today,state); render(); });
   const rs = document.getElementById("restart");
   rs.addEventListener("click", ()=>{
