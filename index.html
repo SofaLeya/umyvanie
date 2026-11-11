@@ -135,7 +135,6 @@ body{margin:0}
     <div class="sec-head"><h2>Утро</h2><div class="sec-right"><label class="all"><input type="checkbox" id="all-am" aria-label="Отметить всё: утро">Всё</label><span class="count" id="c-am"></span></div></div>
     <ol>
       <li><label class="step"><input type="checkbox" id="am-wash" data-g="am"><span class="txt"><span class="name">Умыться</span><span class="prod">SaliZink на лоб и нос, Kora на щёки и подбородок</span><span class="note">Когда Kora закончится, на щёки и подбородок Aravia Galactomyces.</span></span></label></li>
-      <li id="lotion-li"><label class="step"><input type="checkbox" id="am-lotion" data-g="am" data-opt="1"><span class="txt"><span class="name">Лосьон на лоб и нос <span class="tag">через день</span></span><span class="prod">SaliZink лосьон</span><span class="note">Только на лоб и нос, щёки не трогать.</span></span></label></li>
       <li><label class="step"><input type="checkbox" id="am-brow" data-g="am" data-lash="am"><span class="txt"><span class="name">Сыворотка на брови</span><span class="prod">Almea</span><span class="note">Только брови, ресницы утром не нужно. Если краситься, за 20 минут до макияжа.</span><span class="note" id="lash-am-status"></span></span></label></li>
       <li><label class="step"><input type="checkbox" id="am-eye" data-g="am"><span class="txt"><span class="name">Крем для век</span><span class="prod">Clean+ Total Repair</span><span class="note">Когда закончится, Vivienne Sabo. По косточке под глазом и под бровью. Не у самых ресниц.</span></span></label></li>
       <li><label class="step"><input type="checkbox" id="am-serum" data-g="am"><span class="txt"><span class="name">Сыворотка на лоб и нос</span><span class="prod">Librederm Seracin</span><span class="note">С серой и цинком, щёки и подбородок пропускай.</span></span></label></li>
@@ -251,13 +250,11 @@ body{margin:0}
 
     // этап
     const t = document.getElementById("phase-title"), pn = document.getElementById("phase-note");
-    if(!start){ t.textContent = "Сегодня первый вечер с адапаленом"; pn.textContent = "Первые 3 недели наносишь через день. Лосьон SaliZink пока откладываешь."; }
+    if(!start){ t.textContent = "Сегодня первый вечер с адапаленом"; pn.textContent = "Первые 3 недели наносишь через день."; }
     else if(n <= 21){ t.textContent = "День "+n+" · адапален через день"; pn.textContent = rest ? "Вчера был адапален, сегодня вечером отдых." : "Сегодня вечером адапален."; }
     else if(n <= 30){ t.textContent = "День "+n+" · можно каждый вечер"; pn.textContent = "Если кожа спокойная, мажь каждый вечер. Если шелушится, оставайся на через день."; }
-    else { t.textContent = "День "+n+" · кожа привыкла"; pn.textContent = "Адапален каждый вечер. Лосьон SaliZink можно вернуть на лоб и нос через день."; }
+    else { t.textContent = "День "+n+" · кожа привыкла"; pn.textContent = "Адапален каждый вечер."; }
 
-    // лосьон только с 31-го дня
-    document.getElementById("lotion-li").hidden = !(n > 30);
     // вечер в день отдыха
     document.getElementById("ad-li").classList.toggle("rest", rest);
     document.getElementById("pm-adapalene").disabled = rest;
@@ -426,7 +423,7 @@ body{margin:0}
         +'<image href="face.png" x="0" y="0" width="1024" height="1024"/>'
         +Z[z]()+'</svg>';
     }
-    const map={"am-wash":"split","am-brow":"brows","am-eye":"eyecream","am-serum":"tzone","am-cream":"full","am-spf":"full","am-lotion":"tzone",
+    const map={"am-wash":"split","am-brow":"brows","am-eye":"eyecream","am-serum":"tzone","am-cream":"full","am-spf":"full",
       "pm-makeup":"wash","pm-wash":"wash","pm-lash":"lashbrow","pm-buffer":"cheeks","pm-adapalene":"adapalene","pm-dry":"cheeks"};
     // «Подробнее»: описание шага и схема лица прячутся под одну кнопку
     document.querySelectorAll("label.step").forEach(lab=>{
