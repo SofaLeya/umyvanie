@@ -62,16 +62,11 @@ input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .step input:checked + .txt .name{text-decoration:line-through;text-decoration-color:var(--muted);color:var(--muted)}
 .wait{padding:8px 16px 8px 54px;font-size:.82rem;color:var(--muted);background:var(--bg)}
 .tag{display:inline-block;font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--warn-soft);color:var(--warn);margin-left:6px;vertical-align:2px}
-.waitstep{display:flex;align-items:center;gap:8px;padding-right:16px;background:var(--bg)}
-.waitstep .step{flex:1;min-width:0}
 .timer{flex:none;background:var(--surface);border:1px solid var(--line);color:var(--accent);font:inherit;font-size:.85rem;font-weight:600;padding:6px 10px;border-radius:8px;cursor:pointer;font-variant-numeric:tabular-nums}
 .timer.running{background:var(--grad);color:#fff;border-color:transparent}
 .where{align-self:flex-start;margin-top:4px;background:none;border:0;padding:2px 0;font:inherit;font-size:.82rem;font-weight:600;color:var(--accent);cursor:pointer;display:inline-flex;align-items:center;gap:4px}
 .where::after{content:"▾";font-size:.9em;line-height:1}
 .where[aria-expanded="true"]::after{content:"▴"}
-.facebox[hidden]{display:none}
-.step .txt > .note{display:none}
-.step.open .txt > .note{display:block}
 .facebox{display:flex;align-items:center;gap:14px;margin-top:6px}
 .face{width:118px;height:142px;flex:none;background:#fff;border-radius:12px;border:1px solid var(--line)}
 .face .skin{fill:var(--paper)}
@@ -124,6 +119,71 @@ body{margin:0}
 .gall.on .gbox::after{content:"";width:10px;height:6px;border-left:2.5px solid var(--bg);border-bottom:2.5px solid var(--bg);transform:rotate(-45deg) translate(1px,-1px)}
 .gall.mix .gbox::after{content:"";width:10px;height:2.5px;background:currentColor;border-radius:2px}
 .gall:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.row{display:flex;align-items:center;gap:8px}
+.row .step{flex:1;min-width:0}
+li.waitstep{background:var(--bg)}
+li.waitstep .row{padding-right:16px}
+.more{padding:0 16px 14px 54px;display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--muted)}
+.more[hidden],.facebox[hidden],[hidden]{display:none !important}
+.more .note:empty{display:none}
+.pbox{display:flex;flex-direction:column;gap:6px;border-top:1px dashed var(--line);padding-top:8px;margin-top:2px}
+.pnext{color:var(--fg)}
+.warnline{color:var(--warn);font-weight:600}
+.tag.exp{background:var(--warn);color:#2a1408}
+.mini{background:none;border:1px solid var(--line);color:var(--fg);font:inherit;font-size:.82rem;padding:5px 10px;border-radius:8px;cursor:pointer}
+.mini:hover{border-color:var(--muted)}
+.mini.acc{border-color:var(--accent);color:var(--accent)}
+.mini.danger{color:var(--warn);border-color:var(--warn-soft)}
+.pask{display:flex;gap:6px}
+.inp,.fld input,.fld textarea,.fld select,.dnote{background:var(--bg);border:1px solid var(--line);color:var(--fg);font:inherit;font-size:.9rem;border-radius:8px;padding:7px 9px;min-width:0;width:100%}
+.inp:focus,.fld input:focus,.fld textarea:focus,.fld select:focus,.dnote:focus{outline:none;border-color:var(--accent)}
+.sws{display:flex;flex-direction:column;gap:8px;margin-top:8px;padding-top:10px;border-top:1px solid #5a1a44}
+.sw{display:flex;gap:10px;align-items:center;font-size:.88rem;cursor:pointer;user-select:none}
+.sw input{appearance:none;flex:none;width:38px;height:22px;border-radius:999px;background:#3a2232;margin:0;position:relative;cursor:pointer;transition:background .15s}
+.sw input::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--fg);transition:transform .15s}
+.sw input:checked{background:var(--grad)}
+.sw input:checked::after{transform:translateX(16px)}
+.hint{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:8px 10px;font-size:.85rem;margin-top:6px}
+.tabs{display:flex;gap:4px;background:var(--bg);border-radius:10px;padding:3px}
+.tabs button{flex:1;background:none;border:0;color:var(--muted);font:inherit;font-size:.85rem;font-weight:600;padding:7px 4px;border-radius:8px;cursor:pointer}
+.tabs button.on{background:var(--accent-soft);color:var(--accent)}
+.day{cursor:pointer}
+.day.future{cursor:default}
+.day.future .dot.plan{opacity:.9;border:1.5px dashed var(--accent)}
+.dot.plan{border:1.5px dashed var(--accent)}
+.dot.half{background:linear-gradient(to top,#ff4fa0 50%,transparent 50%);border-color:var(--accent)}
+.dot.sk{color:#1a0b15;font-weight:600;border-color:transparent}
+.dot.irr{box-shadow:inset 0 0 0 2px var(--warn)}
+.day.sel .dot{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--accent)}
+.stats{font-size:.85rem;color:var(--fg);margin:0}
+.stats b{color:var(--accent)}
+.dpanel{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:12px}
+.dp-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.dp-head b{font-size:1rem}
+.scores{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.scores button{background:none;border:1.5px solid var(--line);color:var(--fg);font:inherit;border-radius:10px;padding:6px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px}
+.scores button b{font-size:1.05rem}
+.scores button span{font-size:.68rem;color:var(--muted)}
+.scores button.on{border-color:transparent;color:#1a0b15}
+.scores button.on span{color:#1a0b15}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:none;border:1px solid var(--line);color:var(--fg);font:inherit;font-size:.82rem;padding:5px 11px;border-radius:999px;cursor:pointer}
+.chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.dnote{resize:vertical;min-height:44px}
+.face.tall{height:206px}
+.edbox summary{cursor:pointer;color:var(--accent);font-weight:600}
+.ed{display:flex;flex-direction:column;gap:14px;margin-top:10px}
+.ed h4{margin:0;font:400 1.15rem/1.2 var(--display)}
+.ed ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.ed-item{border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.ed-item.off .ed-name{opacity:.45;text-decoration:line-through}
+.ed-row{display:flex;align-items:center;gap:6px;padding:6px 8px}
+.ed-row .mini{padding:4px 8px}
+.ed-name{flex:1;min-width:0;text-align:left;background:none;border:0;color:var(--fg);font:inherit;font-size:.92rem;cursor:pointer;padding:4px 2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ed-form{display:flex;flex-direction:column;gap:8px;padding:4px 10px 12px}
+.fld{display:flex;flex-direction:column;gap:3px;font-size:.78rem;color:var(--muted)}
+.fld2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fchk{display:flex;align-items:center;gap:8px;font-size:.88rem;cursor:pointer}
 </style>
 </head>
 <body>
@@ -137,51 +197,49 @@ body{margin:0}
   <div class="phase">
     <span class="big" id="phase-title"></span>
     <span class="note" id="phase-note"></span>
+    <span class="hint" id="phase-hint" hidden></span>
+    <div class="sws" id="sws">
+      <label class="sw" id="sw-eod-wrap"><input type="checkbox" id="sw-eod"><span>Кожа раздражена: адапален через день</span></label>
+      <label class="sw"><input type="checkbox" id="sw-cheeks"><span>Щёки шелушатся: на щёки только 2–3 раза в неделю</span></label>
+    </div>
   </div>
 
   <section>
     <div class="sec-head"><h2>Утро</h2><span class="count" id="c-am"></span></div>
-    <ol>
-      <li><label class="step"><input type="checkbox" id="am-wash" data-g="am"><span class="txt"><span class="name">Умыться</span><span class="prod">SaliZink на лоб и нос, Kora на щёки и подбородок</span><span class="note">Когда Kora закончится, на щёки и подбородок Aravia Galactomyces.</span></span></label></li>
-      <li><label class="step"><input type="checkbox" id="am-brow" data-g="am" data-lash="am"><span class="txt"><span class="name">Сыворотка на брови</span><span class="prod">Almea</span><span class="note">Только брови, ресницы утром не нужно. Если краситься, за 20 минут до макияжа.</span><span class="note" id="lash-am-status"></span></span></label></li>
-      <li><label class="step"><input type="checkbox" id="am-eye" data-g="am"><span class="txt"><span class="name">Крем для век</span><span class="prod">Clean+ Total Repair</span><span class="note">Когда закончится, Vivienne Sabo. По косточке под глазом и под бровью. Не у самых ресниц.</span></span></label></li>
-      <li><label class="step"><input type="checkbox" id="am-serum" data-g="am"><span class="txt"><span class="name">Сыворотка на лоб и нос</span><span class="prod">Librederm Seracin</span><span class="note">С серой и цинком, щёки и подбородок пропускай.</span></span></label></li>
-      <li><label class="step"><input type="checkbox" id="am-cream" data-g="am"><span class="txt"><span class="name">Крем на всё лицо и шею</span><span class="prod">Fito гиалуроновый</span><span class="note">На лоб и нос тонко или пропустить, если жирнятся - там уже Seracin.</span><span class="note">На шелушащиеся места можно Cerafavit.</span></span></label></li>
-      <li><label class="step"><input type="checkbox" id="am-spf" data-g="am" data-opt="1"><span class="txt"><span class="name">SPF, если выходишь на улицу <span class="tag">необяз.</span></span><span class="prod" id="spf-prod"></span><span class="note" id="spf-sun"></span><span class="note">На лицо, шею и декольте.</span><span class="note">Дома не нужен, если не сидишь у окна на солнце.</span></span></label></li>
-    </ol>
+    <ol id="ol-am"></ol>
     <button type="button" class="gall" id="all-am" role="checkbox" aria-checked="false"><span class="gbox"></span><span class="gt"></span></button>
   </section>
 
   <section>
     <div class="sec-head"><h2>Вечер</h2><span class="count" id="c-pm"></span></div>
-    <ol>
-      <li><label class="step"><input type="checkbox" id="pm-makeup" data-g="pm" data-opt="1"><span class="txt"><span class="name">Если был макияж: мицеллярка <span class="tag">необяз.</span></span><span class="note">На глаза прижать диск на 10–15 секунд, не тереть. Потом всё равно умыться.</span></span></label></li>
-      <li><label class="step"><input type="checkbox" id="pm-wash" data-g="pm"><span class="txt"><span class="name">Умыться</span><span class="prod">Aravia Galactomyces Therapy</span><span class="note">Без SaliZink.</span></span></label></li>
-      <li><label class="step"><input type="checkbox" id="pm-lash" data-g="pm" data-lash="pm"><span class="txt"><span class="name">Сыворотка для ресниц и бровей</span><span class="prod">Almea</span><span class="note">Тонкая линия по росту верхних ресниц (нижние не трогать) и на брови. На чистую сухую кожу, минимум за 20 минут до сна.</span><span class="note" id="lash-pm-status"></span></span></label></li>
-      <li class="ad-only waitstep"><label class="step"><input type="checkbox" id="pm-wait1" data-g="pm"><span class="txt"><span class="name">Подождать 5–10 минут</span><span class="note">Промокни полотенцем, кожа должна стать полностью сухой.</span></span></label><button class="timer" type="button" data-for="pm-wait1" data-min="5">Таймер 5 мин</button></li>
-      <li><label class="step"><input type="checkbox" id="pm-buffer" data-g="pm"><span class="txt"><span class="name">Крем на щёки и подбородок</span><span class="prod">Librederm Cerafavit</span><span class="note" id="buffer-note">Буфер от шелушения. Лоб и нос не трогать.</span></span></label></li>
-      <li class="ad-only waitstep"><label class="step"><input type="checkbox" id="pm-wait2" data-g="pm"><span class="txt"><span class="name">Подождать 5 минут</span><span class="note">Пока крем впитается и перестанет скользить.</span></span></label><button class="timer" type="button" data-for="pm-wait2" data-min="5">Таймер 5 мин</button></li>
-      <li id="ad-li"><label class="step"><input type="checkbox" id="pm-adapalene" data-g="pm"><span class="txt"><span class="name" id="ad-name">Адапален на всё лицо</span><span class="prod">Дифферин крем 0,1%</span><span class="note">Горошина на всё лицо, тонким слоем. Мимо глаз, губ и складок у крыльев носа. На шею не наносить.</span></span></label></li>
-      <li><label class="step"><input type="checkbox" id="pm-dry" data-g="pm" data-opt="1"><span class="txt"><span class="name">Крем на сухие места <span class="tag">необяз.</span></span><span class="prod">Librederm Cerafavit</span><span class="note">Если что-то стянуло или шелушится.</span></span></label></li>
-      <li><label class="step"><input type="checkbox" id="pm-neck" data-g="pm"><span class="txt"><span class="name">Крем на шею</span><span class="prod">Librederm Cerafavit</span><span class="note">Тонким слоем, можно захватить декольте. Без адапалена.</span></span></label></li>
-    </ol>
+    <ol id="ol-pm"></ol>
     <button type="button" class="gall" id="all-pm" role="checkbox" aria-checked="false"><span class="gbox"></span><span class="gt"></span></button>
   </section>
 
   <div class="track">
     <div class="cal-head">
       <button type="button" class="cal-nav" id="cal-prev" aria-label="Предыдущий месяц">‹</button>
-      <h3 id="cal-title">Адапален</h3>
+      <h3 id="cal-title"></h3>
       <button type="button" class="cal-nav" id="cal-next" aria-label="Следующий месяц">›</button>
     </div>
+    <div class="tabs" id="cal-tabs"><button type="button" data-m="ad">Адапален</button><button type="button" data-m="skin">Кожа</button><button type="button" data-m="care">Уход</button></div>
     <div class="cal-wd"><span>пн</span><span>вт</span><span>ср</span><span>чт</span><span>пт</span><span>сб</span><span>вс</span></div>
     <div class="days" id="days"></div>
-    <p class="note" style="margin:0">Закрашен день, когда был адапален. Ошиблась в прошлом дне? Нажми на него.</p>
+    <p class="note" style="margin:0" id="cal-legend"></p>
+    <p class="stats" id="stats"></p>
+
+    <div class="dpanel">
+      <div class="dp-head"><b id="dp-date"></b><button type="button" class="mini" id="dp-today" hidden>К сегодня</button></div>
+      <label class="sw" id="dp-ad-wrap"><input type="checkbox" id="dp-ad"><span>В этот вечер был адапален</span></label>
+      <div class="scores" id="dp-scores"></div>
+      <div class="chips" id="dp-tags"></div>
+      <textarea class="dnote" id="dp-note" rows="2" placeholder="Заметка: что заметила, новое средство, месячные..."></textarea>
+    </div>
   </div>
 
   <ul class="rules">
-    <li>Первые 3 недели адапален через день, потом каждый вечер, если кожа спокойная.</li>
-    <li>Если щёки шелушатся, мажь их адапаленом 2–3 раза в неделю, а лоб и нос каждый раз.</li>
+    <li>Первые 3 недели адапален через день, потом каждый вечер, если кожа спокойная. Если раздражена, включи переключатель вверху.</li>
+    <li>Если щёки шелушатся, включи режим для щёк: лоб и нос каждый раз, щёки 2–3 раза в неделю.</li>
     <li>Вечером без SaliZink, кислот и скрабов.</li>
     <li>Первые 2–4 недели может быть обострение, это нормально. Результат через 2–3 месяца.</li>
     <li>Галочки сбрасываются каждый день в 5 утра.</li>
@@ -191,6 +249,13 @@ body{margin:0}
     <button class="reset" id="reset" type="button">Снять все галочки за сегодня</button>
     <button class="reset" id="restart" type="button">Начать курс заново</button>
   </div>
+
+  <section class="backup">
+    <details class="edbox"><summary>Настроить шаги</summary>
+      <p class="note" style="margin:8px 0 0">Меняй названия, средства и подсказки, скрывай и добавляй шаги, двигай стрелками. Всё сохраняется сразу.</p>
+      <div class="ed" id="ed"></div>
+    </details>
+  </section>
 
   <section class="backup">
     <h3>Резервная копия</h3>
@@ -207,300 +272,7 @@ body{margin:0}
 
 <script src="tgbk.js"></script>
 <script src="ydsync.js"></script>
-<script>
-(function(){
-  const PREFIX = "skin:", SHIFT = 5*3600*1000, DAY = 86400000;
-  function dayKey(t){
-    const x = new Date(t - SHIFT);
-    return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");
-  }
-  function load(k){ try{ return JSON.parse(localStorage.getItem(PREFIX+k)) || {}; }catch(e){ return {}; } }
-  function save(k,v){ try{ localStorage.setItem(PREFIX+k, JSON.stringify(v)); }catch(e){} }
-  function getStart(){
-    // начало курса = самый ранний отмеченный адапален (после последнего «Начать заново»)
-    let best = null;
-    try{
-      const from = localStorage.getItem(PREFIX+"reset") || "";
-      for(let i=0;i<localStorage.length;i++){
-        const key = localStorage.key(i);
-        const m = key && key.match(/^skin:(\d{4}-\d{2}-\d{2})$/);
-        if(!m || m[1] < from) continue;
-        let v = {}; try{ v = JSON.parse(localStorage.getItem(key)) || {}; }catch(e){}
-        if(v["pm-adapalene"] && (!best || m[1] < best)) best = m[1];
-      }
-    }catch(e){}
-    return best;
-  }
-  function setStart(v){ try{ if(v===null) localStorage.setItem(PREFIX+"reset", today); }catch(e){} }
-  function firstDayWith(ids){
-    let best = null;
-    try{
-      for(let i=0;i<localStorage.length;i++){
-        const key = localStorage.key(i);
-        const m = key && key.match(/^skin:(\d{4}-\d{2}-\d{2})$/);
-        if(!m) continue;
-        let v = {}; try{ v = JSON.parse(localStorage.getItem(key)) || {}; }catch(e){}
-        if(ids.some(id => v[id]) && (!best || m[1] < best)) best = m[1];
-      }
-    }catch(e){}
-    return best;
-  }
-  function daysBetween(a,b){ return Math.round((Date.parse(b)-Date.parse(a))/DAY); }
-
-  let today = dayKey(Date.now());
-  let state = load(today);
-  const boxes = [...document.querySelectorAll(".step input")];
-
-  function render(){
-    document.getElementById("date").textContent = new Date(Date.now()-SHIFT).toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
-    const start = getStart();
-    const n = start ? daysBetween(start, today) + 1 : 0;  // день курса, 0 = ещё не начат
-    const yesterdayAd = !!load(dayKey(Date.now()-DAY))["pm-adapalene"];
-    const everyOther = n <= 21;
-    const rest = everyOther && n > 0 && yesterdayAd && !state["pm-adapalene"];
-
-    // этап
-    const t = document.getElementById("phase-title"), pn = document.getElementById("phase-note");
-    if(!start){ t.textContent = "Сегодня первый вечер с адапаленом"; pn.textContent = "Первые 3 недели наносишь через день."; }
-    else if(n <= 21){ t.textContent = "День "+n+" · адапален через день"; pn.textContent = rest ? "Вчера был адапален, сегодня вечером отдых." : "Сегодня вечером адапален."; }
-    else if(n <= 30){ t.textContent = "День "+n+" · можно каждый вечер"; pn.textContent = "Если кожа спокойная, мажь каждый вечер. Если шелушится, оставайся на через день."; }
-    else { t.textContent = "День "+n+" · кожа привыкла"; pn.textContent = "Адапален каждый вечер."; }
-
-    // вечер в день отдыха
-    document.getElementById("ad-li").classList.toggle("rest", rest);
-    document.getElementById("pm-adapalene").disabled = rest;
-    document.getElementById("ad-name").textContent = rest ? "Адапален: сегодня отдых" : "Адапален на всё лицо";
-    document.querySelectorAll(".ad-only").forEach(el => el.hidden = rest);
-    document.getElementById("buffer-note").textContent = rest ? "Сегодня без адапалена, просто увлажнить." : "Буфер от шелушения. Лоб и нос не трогать.";
-
-    // SPF по сезону: октябрь–февраль лёгкий, март–сентябрь Goodal
-    const mon = new Date(Date.now()-SHIFT).getMonth()+1;
-    document.getElementById("spf-prod").textContent = (mon>=10 || mon<=2) ? "Skin1004 Air-Fit Light SPF 30" : "Goodal Heartleaf SPF 50+";
-    // закат в Петербурге: после него SPF не нужен
-    (function(){
-      const d=new Date(Date.now()-SHIFT), y0=new Date(d.getFullYear(),0,0);
-      const n=Math.floor((d-y0)/DAY), g=2*Math.PI/365*(n-1), R=Math.PI/180, lat=59.94*R, lon=30.31;
-      const eq=229.18*(0.000075+0.001868*Math.cos(g)-0.032077*Math.sin(g)-0.014615*Math.cos(2*g)-0.040849*Math.sin(2*g));
-      const dec=0.006918-0.399912*Math.cos(g)+0.070257*Math.sin(g)-0.006758*Math.cos(2*g)+0.000907*Math.sin(2*g)-0.002697*Math.cos(3*g)+0.00148*Math.sin(3*g);
-      const ha=Math.acos(Math.cos(90.833*R)/(Math.cos(lat)*Math.cos(dec))-Math.tan(lat)*Math.tan(dec))/R;
-      const m=Math.round(720-4*(lon-ha)-eq+180);
-      const fmt=x=>Math.floor(x/60)+":"+String(x%60).padStart(2,"0");
-      const until=(mon>=5 && mon<=8) ? 18*60 : m-60;
-      document.getElementById("spf-sun").textContent = "Закат сегодня в "+fmt(m)+". После "+fmt(until)+" солнце уже слабое, SPF не нужен.";
-    })();
-
-    // курс сыворотки для ресниц: 90 дней каждый день, потом пн/ср/пт вечером
-    // начало курса сыворотки: 21 октября 2026 (получила и начала вечером), либо более ранняя отметка
-    const LASH_START = "2026-10-21";
-    const lsMark = firstDayWith(["pm-lash","am-brow"]) || (state["pm-lash"]||state["am-brow"] ? today : null);
-    const ls = (!lsMark || LASH_START < lsMark) ? LASH_START : lsMark;
-    const ln = ls ? daysBetween(ls, today) + 1 : 0;
-    const maint = ln > 90;
-    const wd = new Date(Date.now()-SHIFT).getDay();
-    const maintDay = [1,3,5].includes(wd);
-    document.querySelector('[data-lash="am"]').closest("li").hidden = maint;
-    document.querySelector('[data-lash="pm"]').closest("li").hidden = maint && !maintDay;
-    const st = !ls ? "Курс 3 месяца каждый день. Отсчёт начнётся с первой отметки."
-      : maint ? "Поддержка: только вечером по пн, ср и пт."
-      : "Курс: день "+ln+" из 90"+(ln>=84 ? ". Скоро переход на поддержку, пн/ср/пт." : ".");
-    document.getElementById("lash-am-status").textContent = st;
-    document.getElementById("lash-pm-status").textContent = st;
-
-    boxes.forEach(b => b.checked = !!state[b.id]);
-    ["am","pm"].forEach(g=>{
-      const req = boxes.filter(b => b.dataset.g===g && !b.dataset.opt && !b.closest("li").hidden && !(rest && b.id==="pm-adapalene"));
-      const k = req.filter(b=>b.checked).length;
-      const el = document.getElementById("c-"+g);
-      el.textContent = k===req.length ? "готово" : k+" из "+req.length;
-      el.classList.toggle("done", k===req.length);
-      const gv=boxes.filter(b=>b.dataset.g===g&&!b.closest("li").hidden&&!b.disabled), gk=gv.filter(b=>b.checked).length, gb=document.getElementById("all-"+g);
-      const gon=gv.length>0&&gk===gv.length, gmix=gk>0&&!gon;
-      gb.classList.toggle("on",gon); gb.classList.toggle("mix",gmix); gb.setAttribute("aria-checked",gmix?"mixed":String(gon));
-      gb.querySelector(".gt").textContent=gon?"Готово":"Отметить всё: "+(g==="am"?"утро":"вечер");
-    });
-
-    // календарь адапалена на месяц
-    const wrap = document.getElementById("days"); wrap.innerHTML = "";
-    const now = new Date(Date.now()-SHIFT);
-    const vm = new Date(now.getFullYear(), now.getMonth()+calOffset, 1);
-    const title = vm.toLocaleDateString("ru-RU",{month:"long", year:"numeric"}).replace(" г.","");
-    document.getElementById("cal-title").textContent = "Адапален · "+title.charAt(0).toUpperCase()+title.slice(1);
-    document.getElementById("cal-next").disabled = calOffset>=0;
-    const lead = (vm.getDay()+6)%7, dim = new Date(vm.getFullYear(), vm.getMonth()+1, 0).getDate();
-    for(let i=0;i<lead;i++) wrap.appendChild(document.createElement("div"));
-    for(let dnum=1; dnum<=dim; dnum++){
-      const k = vm.getFullYear()+"-"+String(vm.getMonth()+1).padStart(2,"0")+"-"+String(dnum).padStart(2,"0");
-      const isToday = k===today, isFuture = k>today;
-      const on = !!(isToday ? state["pm-adapalene"] : (!isFuture && load(k)["pm-adapalene"]));
-      const el = document.createElement("div");
-      el.className = "day"+(isToday?" today":"")+(isFuture?" future":"");
-      el.innerHTML = '<span class="dot'+(on?" on":"")+'">'+dnum+'</span>';
-      el.title = dnum+" · "+(on?"адапален был":"без адапалена");
-      if(!isToday && !isFuture){
-        el.classList.add("past");
-        el.setAttribute("role","button"); el.tabIndex=0;
-        const toggle = ()=>{ const st = load(k); st["pm-adapalene"] = !st["pm-adapalene"]; save(k, st); render(); };
-        el.addEventListener("click", toggle);
-        el.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggle(); } });
-      }
-      wrap.appendChild(el);
-    }
-  }
-
-  let calOffset = 0;
-  document.getElementById("cal-prev").addEventListener("click",()=>{ calOffset--; render(); });
-  document.getElementById("cal-next").addEventListener("click",()=>{ if(calOffset<0){ calOffset++; render(); } });
-  function syncDay(){ const k = dayKey(Date.now()); if(k!==today){ today=k; state=load(k); } }
-  boxes.forEach(b => b.addEventListener("change", ()=>{
-    syncDay();
-    state[b.id]=b.checked; save(today,state);
-    render();
-  }));
-  ["am","pm"].forEach(g=>{
-    document.getElementById("all-"+g).addEventListener("click", ()=>{
-      syncDay();
-      const vis = boxes.filter(b => b.dataset.g===g && !b.closest("li").hidden && !b.disabled);
-      const val = !vis.every(b => b.checked);
-      boxes.filter(b => b.dataset.g===g && !b.closest("li").hidden && !b.disabled).forEach(b => { state[b.id]=val; });
-      save(today,state);
-      render();
-    });
-  });
-  document.getElementById("reset").addEventListener("click", ()=>{ state={}; save(today,state); render(); });
-  const rs = document.getElementById("restart");
-  rs.addEventListener("click", ()=>{
-    if(rs.dataset.armed){ setStart(null); delete rs.dataset.armed; rs.textContent="Начать курс заново"; render(); return; }
-    rs.dataset.armed="1"; rs.textContent="Точно? Нажми ещё раз";
-    setTimeout(()=>{ delete rs.dataset.armed; rs.textContent="Начать курс заново"; }, 4000);
-  });
-  document.addEventListener("visibilitychange", ()=>{ syncDay(); render(); });
-
-  // таймеры ожидания
-  document.querySelectorAll(".timer").forEach(btn=>{
-    let iv=null;
-    const label = btn.textContent;
-    btn.addEventListener("click", ()=>{
-      if(iv){ clearInterval(iv); iv=null; btn.classList.remove("running"); btn.textContent=label; return; }
-      const end = Date.now() + (+btn.dataset.min)*60000;
-      btn.classList.add("running");
-      const tick = ()=>{
-        const left = Math.max(0, Math.round((end-Date.now())/1000));
-        btn.textContent = Math.floor(left/60)+":"+String(left%60).padStart(2,"0");
-        if(left<=0){
-          clearInterval(iv); iv=null; btn.classList.remove("running"); btn.textContent="Готово";
-          const box = document.getElementById(btn.dataset.for);
-          if(!box.checked){ box.checked=true; box.dispatchEvent(new Event("change")); }
-          try{ navigator.vibrate && navigator.vibrate([300,150,300]); }catch(e){}
-          try{ const c=new (window.AudioContext||window.webkitAudioContext)(), o=c.createOscillator(), g=c.createGain(); o.frequency.value=880; o.connect(g); g.connect(c.destination); g.gain.setValueAtTime(.2,c.currentTime); g.gain.exponentialRampToValueAtTime(.001,c.currentTime+1); o.start(); o.stop(c.currentTime+1); }catch(e){}
-          setTimeout(()=>{ btn.textContent=label; }, 5000);
-        }
-      };
-      tick(); iv=setInterval(tick, 1000);
-    });
-  });
-
-  // схемы лица под раскрывашкой (рисунок: face.png, 1024×1024)
-  (function(){
-    let n=0;
-    const FACE='M358 302 C380 255 440 205 512 194 C584 205 644 255 666 302 L670 332 C672 400 668 465 655 500 C640 555 600 608 562 630 C540 641 484 641 462 630 C424 608 384 555 369 500 C356 465 352 400 354 332 Z';
-    const P={
-      hair:'',
-      forehead:'<path d="M358 302 C380 255 440 205 512 194 C584 205 644 255 666 302 L670 336 L354 336 Z"/>',
-      nose:'<path d="M495 402 L529 402 L550 505 Q512 516 474 505 Z"/>',
-      cheeks:'<ellipse cx="418" cy="480" rx="44" ry="38"/><ellipse cx="606" cy="480" rx="44" ry="38"/>',
-      chin:'<ellipse cx="512" cy="611" rx="44" ry="20"/>',
-      eyes:'<ellipse cx="430" cy="393" rx="56" ry="26"/><ellipse cx="594" cy="393" rx="56" ry="26"/>',
-      lips:'<ellipse cx="512" cy="555" rx="62" ry="25"/>',
-      folds:'<circle cx="471" cy="505" r="12"/><circle cx="553" cy="505" r="12"/>'
-    };
-    function masked(cls,holes){const id='fm'+(++n);
-      return '<mask id="'+id+'"><path d="'+FACE+'" fill="#fff"/><g fill="#000">'+P.hair+holes.map(h=>P[h]).join('')+'</g></mask><path class="'+cls+'" d="'+FACE+'" mask="url(#'+id+')"/>';}
-    function clip(cls,inner){const id='fc'+(++n);
-      return '<clipPath id="'+id+'"><path d="'+FACE+'"/></clipPath><g class="'+cls+'" clip-path="url(#'+id+')">'+inner+'</g>';}
-    const browL='M372 362 Q425 340 478 360', browR='M546 360 Q599 340 652 362';
-    const lashL='M388 390 Q430 368 470 392', lashR='M554 392 Q594 368 636 390';
-    const Z={
-      tzone:()=>clip('z1',P.forehead+P.nose),
-      cheeks:()=>clip('z1',P.cheeks+P.chin),
-      split:()=>clip('z1',P.forehead+P.nose)+clip('z2',P.cheeks+P.chin),
-      full:()=>masked('z1',['eyes','lips']),
-      wash:()=>masked('z1',[]),
-      adapalene:()=>masked('z1',['eyes','lips','folds']),
-      eyecream:()=>'<path class="hl" d="M392 421 Q430 437 470 421"/><path class="hl" d="M554 421 Q594 437 632 421"/><path class="hl" style="stroke-width:7" d="M394 375 Q430 366 466 373"/><path class="hl" style="stroke-width:7" d="M558 373 Q594 366 630 375"/>',
-      brows:()=>'<path class="hl" d="'+browL+'"/><path class="hl" d="'+browR+'"/>',
-      lashbrow:()=>'<path class="hl" d="'+browL+'"/><path class="hl" d="'+browR+'"/><path class="hl" style="stroke-width:8" d="'+lashL+'"/><path class="hl" style="stroke-width:8" d="'+lashR+'"/>'
-    };
-    function face(z){
-      return '<svg class="face" viewBox="283 100 458 550" role="img" aria-label="Зона нанесения">'
-        +'<image href="face.png" x="0" y="0" width="1024" height="1024"/>'
-        +Z[z]()+'</svg>';
-    }
-    const map={"am-wash":"split","am-brow":"brows","am-eye":"eyecream","am-serum":"tzone","am-cream":"full","am-spf":"full",
-      "pm-makeup":"wash","pm-wash":"wash","pm-lash":"lashbrow","pm-buffer":"cheeks","pm-adapalene":"adapalene","pm-dry":"cheeks"};
-    // «Подробнее»: описание шага и схема лица прячутся под одну кнопку
-    document.querySelectorAll("label.step").forEach(lab=>{
-      const box=lab.querySelector("input"), txt=lab.querySelector(".txt");
-      const z=box && map[box.id];
-      if(!z && !txt.querySelector(":scope > .note")) return;
-      const btn=document.createElement("button");
-      btn.type="button"; btn.className="where"; btn.textContent="Подробнее"; btn.setAttribute("aria-expanded","false");
-      let fb=null;
-      if(z){
-        fb=document.createElement("span"); fb.className="facebox"; fb.hidden=true;
-        fb.innerHTML=face(z)+(z==="split"?'<span class="legend"><span><i style="background:var(--grad)"></i>SaliZink</span><span><i style="background:#c9932f"></i>Kora / Aravia</span></span>':'');
-        fb.addEventListener("click",e=>{ e.preventDefault(); e.stopPropagation(); });
-      }
-      btn.addEventListener("click",e=>{
-        e.preventDefault(); e.stopPropagation();
-        const open=!lab.classList.contains("open");
-        lab.classList.toggle("open",open);
-        if(fb) fb.hidden=!open;
-        btn.setAttribute("aria-expanded", String(open));
-      });
-      txt.append(btn); if(fb) txt.append(fb);
-    });
-  })();
-
-  // резервная копия
-  (function(){
-    const st=document.getElementById("bk-status");
-    function stamp(){ try{ const d=localStorage.getItem(PREFIX+"lastBackup"); if(d) st.textContent="Последняя копия: "+new Date(d).toLocaleDateString("ru-RU",{day:"numeric",month:"long"})+". Скачивай новую раз в неделю."; }catch(e){} }
-    function collect(){ const data={};
-      try{ for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(k && k.startsWith(PREFIX) && k!==PREFIX+"lastBackup") data[k]=localStorage.getItem(k); } }catch(e){}
-      return data; }
-    try{ if(window.YDS) YDS.init({app:"umyvanie",title:"Уход",cid:"02760b58a041462481b0b3fd09c33d7b",redir:"https://sofaleya.github.io/umyvanie/",prefix:PREFIX,exclude:[PREFIX+"lastBackup"],accent:"#ff4fa0",accentText:"#fff"}); }catch(e){}
-    try{ if(window.TGBK) TGBK.init({app:"umyvanie",title:"Уход",accent:"var(--accent)",accentText:"var(--bg)",
-      file:d=>"uhod-kopiya-"+d+".json",
-      data:()=>{ const data=collect(); return Object.keys(data).length? JSON.stringify({app:"umyvanie",v:1,data},null,1) : ""; }}); }catch(e){}
-    document.getElementById("bk-save").addEventListener("click",()=>{
-      const data=collect();
-      const blob=new Blob([JSON.stringify({app:"umyvanie",v:1,saved:new Date().toISOString(),data},null,1)],{type:"application/json"});
-      const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="uhod-kopiya-"+today+".json";
-      document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
-      try{ localStorage.setItem(PREFIX+"lastBackup", new Date().toISOString()); }catch(e){}
-      stamp();
-    });
-    document.getElementById("bk-file").addEventListener("change",e=>{
-      const f=e.target.files[0]; if(!f) return;
-      const r=new FileReader();
-      r.onload=()=>{
-        try{
-          const j=JSON.parse(r.result);
-          if(j.app!=="umyvanie" || !j.data) throw 0;
-          Object.entries(j.data).forEach(([k,v])=>{ if(k.startsWith(PREFIX)) localStorage.setItem(k,v); });
-          state=load(today); render();
-          st.textContent="Готово, восстановлено отметок: "+Object.keys(j.data).length+".";
-        }catch(err){ st.textContent="Этот файл не подходит. Выбери файл копии, который скачивала с этой странички."; }
-        e.target.value="";
-      };
-      r.readAsText(f);
-    });
-    stamp();
-  })();
-  render();
-})();
-</script>
-
+<script src="app.js"></script>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script>
 </body>
 </html>
