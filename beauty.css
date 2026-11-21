@@ -168,3 +168,18 @@ dialog{width:min(94vw,520px);max-height:90vh;overflow:auto;border:1px solid var(
 @media(max-width:350px){.care-memo summary{padding-inline:11px}.memo-content{padding-inline:11px}.memo-heading small{font-size:.72rem}}
 
 .care-memo.memo-closing .memo-arrow{transform:rotate(0);background:var(--accent-soft);color:var(--accent)}
+/* Independent settings cards below the care memo. */
+.settings-card{display:flex;flex-direction:column;gap:0;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.settings-card-trigger{display:flex;align-items:center;gap:12px;width:100%;min-height:70px;padding:12px 15px;border:0;background:transparent;color:var(--fg);text-align:left;cursor:pointer}
+.settings-card-trigger .memo-arrow{background:var(--grad);color:#fff}
+.settings-card-trigger[aria-expanded=true] .memo-arrow{transform:rotate(180deg)}
+.settings-panel{display:flex;flex-direction:column;gap:9px;padding:13px 15px 16px;border-top:1px solid var(--line);overflow:hidden}
+.settings-panel .note{margin:0;font-size:.8rem;line-height:1.4}
+.settings-panel .sw,.settings-panel .fchk{font-size:.86rem}
+.settings-panel .fld{font-size:.78rem}
+.reminder-time{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+.reminder-time .fchk{min-width:0}
+.reminder-clock{min-width:0;width:112px;min-height:40px;padding:7px 8px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--fg);font:inherit;font-size:.82rem}
+#reminder-list{font-size:.8rem}
+#reminder-list .note{margin:0}
+@media(max-width:350px){.settings-card-trigger{padding-inline:11px}.settings-panel{padding-inline:11px}.reminder-clock{width:100px}}

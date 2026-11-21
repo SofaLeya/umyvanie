@@ -12,6 +12,7 @@ const fs=require('node:fs');
   await page.locator('#ol-am').evaluate(x=>x.scrollIntoView({block:'start'}));
   await page.screenshot({path:'screenshots/compact-list.png'});
   await page.locator('.bottom-nav [data-tab=more]').click();
+  await page.locator('#appearance-card .settings-card-trigger').click();
   await page.locator('#theme-select').selectOption('dark');
   await page.locator('.bottom-nav [data-tab=today]').click();
   await page.evaluate(()=>scrollTo(0,0));
