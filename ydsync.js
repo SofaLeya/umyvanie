@@ -77,13 +77,15 @@
   function enc(o){var m={};Object.keys(o).forEach(function(k){var v=o[k];m[k]=(m3obj(v)&&Object.keys(v).length===1&&typeof v.__raw==='string')?v.__raw:JSON.stringify(v)});return m}
   function baseGet(){try{var t=localStorage.getItem('yds-base:'+C.app);return t?JSON.parse(t):undefined}catch(e){return undefined}}
   function baseSet(map){applying=true;try{localStorage.setItem('yds-base:'+C.app,JSON.stringify(map))}catch(e){}applying=false}
-  function pack(d){return JSON.stringify({app:C.app,v:1,savedAt:Date.now(),dev:get().dev,data:d||collect()})}
-  function writeAll(map){applying=true;
+  function pack(d,photos){return JSON.stringify({app:C.app,v:2,savedAt:Date.now(),dev:get().dev,data:d||collect(),photos:photos||{}})}
+  function cloudSafety(){try{localStorage.setItem('skin2:safety:cloud',JSON.stringify({app:C.app,v:2,saved:new Date().toISOString(),data:collect()}))}catch(e){throw Error('Не удалось создать локальную копию перед синхронизацией')}}
+  function writeAll(map){cloudSafety();applying=true;
     try{var cur=collect();Object.keys(cur).forEach(function(k){if(!(k in map))_rem.call(localStorage,k)});
       Object.keys(map).forEach(function(k){if(own(k))_set.call(localStorage,k,map[k])})}catch(e){}
     applying=false}
-  function adopt(r,mod){
-    writeAll(r.data);set({mod:mod,sent:get().chg||0});baseSet(r.data);
+  async function adopt(r,mod){
+    if(window.SkinCore)SkinCore.validBackup(r);
+    writeAll(r.data);if(window.Skin2&&r.photos)await Skin2.importPhotos(r.photos); set({mod:mod,sent:get().chg||0});baseSet(r.data);
     try{sessionStorage.setItem('yds-note','Подтянула данные из Яндекс Диска')}catch(e){}
     (leaving=true,location.reload());
   }
@@ -93,15 +95,16 @@
     busy=true;st='wait';paint();
     try{
       var m=get(),mt=await meta();
+      if(mt&&!m.mod){st='restore';msg='В Диске есть копия. Выбери восстановление, чтобы просмотреть конфликты.';busy=false;paint();return}
       if(mt&&mt.modified!==m.mod){
-        var r=await download();if(!r||!r.data||r.app!==C.app)throw {code:'bad'};
-        if(sameData(r.data)){set({mod:mt.modified});baseSet(r.data)}
+        var r=await download();if(!r||!r.data||r.app!==C.app)throw {code:'bad'};if(window.SkinCore)SkinCore.validBackup(r);
+        if(sameData(r.data)){if(window.Skin2&&r.photos)await Skin2.importPhotos(r.photos);set({mod:mt.modified});baseSet(r.data)}
         else if(empty()){busy=false;return adopt(r,mt.modified)}
         else{ // в Диске новое с другого устройства (или первое подключение): склеиваем с тем, что здесь
           var mine=collect(),b=m.mod?baseGet():undefined,merged=enc(merge3(b?dec(b):undefined,dec(mine),dec(r.data)));
           if(m3eq(merged,r.data)){busy=false;return adopt(r,mt.modified)}
           set({mod:mt.modified,chg:Date.now()});baseSet(r.data);
-          if(!m3eq(merged,mine)){writeAll(merged);busy=false;
+          if(!m3eq(merged,mine)){writeAll(merged);if(window.Skin2&&r.photos)await Skin2.importPhotos(r.photos);busy=false;
             try{sessionStorage.setItem('yds-note','Склеила отметки с другого устройства')}catch(e){}
             return (leaving=true,location.reload())}
         }
@@ -113,7 +116,7 @@
         else{
           var day=iso(new Date());
           if(pre&&m.bk!==day){try{await daily(day);set({bk:day})}catch(e){if(e&&e.code===401)throw e}}
-          var chg=m.chg||Date.now(),snap=collect();await upload(FILE,pack(snap));
+          var chg=m.chg||Date.now(),snap=collect(),photos=window.Skin2?await Skin2.photosExport():{};if(window.SkinCore)SkinCore.validBackup({app:C.app,v:2,data:snap});await upload(FILE,pack(snap,photos));
           var nm=await meta();set({mod:nm&&nm.modified,sent:chg});baseSet(snap);
         }
       }
@@ -121,6 +124,16 @@
     }catch(e){st=on()?'err':'off';if(!(e&&e.code===401))msg=errText(e)}
     busy=false;paint();
     if(again){again=false;setTimeout(sync,300)}
+  }
+  async function restore(){
+    if(!on())return;busy=true;st='wait';paint();
+    try{var mt=await meta();if(!mt)throw Error('Копия не найдена');var r=await download();
+      if(!r||r.app!==C.app||!r.data)throw Error('Неверный формат копии');
+      if(!window.Skin2)throw Error('Приложение ещё загружается');
+      var done=await Skin2.importBackup(r);
+      if(done){set({mod:mt.modified,sent:Date.now(),chg:Date.now()});baseSet(r.data);st='ok';msg='';}
+      else st='restore';
+    }catch(e){st='err';msg=errText(e)}busy=false;paint();
   }
   function login(){leaving=true;location.href='https://oauth.yandex.ru/authorize?response_type=token&client_id='+C.cid+'&redirect_uri='+encodeURIComponent(C.redir)}
   function logout(){if(!confirm('Отключить Яндекс Диск на этом устройстве? Данные останутся и тут, и в Диске.'))return;
@@ -136,9 +149,10 @@
         '<div><button type="button" data-yds="in" style="'+BTN+prim()+'">Войти через Яндекс</button></div>';
     }else{
       var at=m.at?new Date(m.at):null;
-      s+='<div>'+(st==='wait'?'Синхронизирую…':st==='err'?'<span style="color:#e0556b">Не получилось: '+esc(msg)+'</span>':'✅ Подключено'+(at?'. Последняя синхронизация: '+(iso(at)===iso(new Date())?'сегодня':at.toLocaleDateString('ru-RU',{day:'numeric',month:'long'}))+' в '+p2(at.getHours())+':'+p2(at.getMinutes()):''))+'</div>'+
+      s+='<div>'+(st==='restore'?'В Диске есть копия. Выбери восстановление перед синхронизацией.':st==='wait'?'Синхронизирую…':st==='err'?'<span style="color:#e0556b">Не получилось: '+esc(msg)+'</span>':'✅ Подключено'+(at?'. Последняя синхронизация: '+(iso(at)===iso(new Date())?'сегодня':at.toLocaleDateString('ru-RU',{day:'numeric',month:'long'}))+' в '+p2(at.getHours())+':'+p2(at.getMinutes()):''))+'</div>'+
         '<div style="opacity:.75;font-size:13px">Копии за последние 14 дней лежат там же, в папке «Копии».</div>'+
         '<div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><button type="button" data-yds="now" style="'+BTN+prim()+'">Синхронизировать сейчас</button>'+
+        '<button type="button" data-yds="restore" style="'+BTN+prim()+'">Восстановить с Диска</button>'+
         '<button type="button" data-yds="out" style="'+LNK+'">отключить</button></div>';
     }
     return s+'</div>'}
@@ -162,7 +176,7 @@
     document.addEventListener('click',function(e){var g=e.target.closest&&e.target.closest('.ydsync-badge');
       if(g){var bx=document.querySelector('.ydsync-box');if(bx){for(var el=bx;el;el=el.parentElement)if(el.tagName==='DETAILS')el.open=true;bx.scrollIntoView({behavior:'smooth',block:'center'})}return}
       var b=e.target.closest&&e.target.closest('[data-yds]');if(!b)return;e.preventDefault();
-      var a=b.getAttribute('data-yds');if(a==='in')login();else if(a==='now')sync();else if(a==='out')logout()});
+      var a=b.getAttribute('data-yds');if(a==='in')login();else if(a==='now')sync();else if(a==='restore')restore();else if(a==='out')logout()});
     document.addEventListener('visibilitychange',function(){if(!on())return;
       if(document.visibilityState==='visible')setTimeout(sync,800);
       else if(dirty()){clearTimeout(timer);sync()}}); // свернули с неотправленным - отправляем сразу

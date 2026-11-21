@@ -29,9 +29,9 @@
   function sendFile(a,manual){ // одна отправка за раз: автокопия и ручная/при подключении не дублируют друг друга
     if(inflight)return inflight;
     return inflight=sendFile0(a,manual).then(function(r){inflight=null;return r},function(e){inflight=null;throw e})}
-  function sendFile0(a,manual){
+  async function sendFile0(a,manual){
     var c=cfg();if(!c.token||!c.chat)return Promise.reject(new Error('not set'));
-    var data=a.data();if(!data)return Promise.resolve(false);
+    var data=await a.data();if(!data)return false;
     var d=today(),lk='tgbk-last:'+a.app,last=get(lk,{}),h=hash(data);
     if(!manual&&last.h===h){last.d=d;put(lk,last);return Promise.resolve(false)} // ничего не менялось — не спамим
     var fd=new FormData();fd.append('chat_id',c.chat);
