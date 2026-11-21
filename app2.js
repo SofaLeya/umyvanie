@@ -25,7 +25,56 @@ function mount(){const wrap=document.querySelector('.wrap'), children=[...wrap.c
  today.append(header,hero,periods,overview,tabs,settings,calm,complete,am,pm);
  calendar.append(track);analysis.innerHTML+='<div class="track"><div class="range-tabs" id="range-tabs"><button data-range="7">7 дней</button><button data-range="30">30 дней</button><button data-range="90">90 дней</button></div><div id="analysis-stats"></div><div id="analysis-chart"></div><p class="note">Графики показывают записи дневника и не являются медицинской оценкой.</p></div>';
  bag.innerHTML+='<div class="bag-tools"><input id="product-search" type="search" placeholder="Поиск средства" aria-label="Поиск средства"><select id="product-filter" aria-label="Статус средства"><option value="all">Все статусы</option><option value="using">Использую</option><option value="spare">Запас</option><option value="planned">Планирую</option><option value="empty">Закончилось</option><option value="archive">Архив</option></select></div><button class="bk" id="product-add">+ Добавить средство</button><div id="product-list" class="product-list"></div>';
- more.append(rules);more.insertAdjacentHTML('beforeend','<section class="backup"><h3>Настройки</h3><label class="sw"><input type="checkbox" id="calm-toggle"><span>Кожа раздражена</span></label><p class="note">Показывает щадящие шаги и подсказки. График адапалена и назначения не меняет.</p><label class="fld">Тема<select id="theme-select"><option value="system">Как в системе</option><option value="light">Светлая</option><option value="dark">Тёмная</option></select></label><h3>Напоминания</h3><label class="fchk"><input type="checkbox" id="rem-am"> Утренний уход</label><input type="time" id="time-am" aria-label="Время утреннего ухода"><label class="fchk"><input type="checkbox" id="rem-pm"> Вечерний уход</label><input type="time" id="time-pm" aria-label="Время вечернего ухода"><label class="fchk"><input type="checkbox" id="rem-expiry"> Срок использования</label><label class="fchk"><input type="checkbox" id="rem-low"> Средство заканчивается</label><p class="note">Напоминания видны только при открытом приложении.</p><div id="reminder-list" aria-live="polite"></div></section>');
+ more.append(rules);
+ more.insertAdjacentHTML('beforeend',`
+   <section class="settings-card" id="care-mode-card">
+     <button type="button" class="settings-card-trigger" aria-expanded="false" aria-controls="care-mode-panel">
+       <span class="memo-heading"><strong>Настройки ухода</strong><small>Раздражение и особенности кожи</small></span>
+       <span class="memo-arrow" aria-hidden="true">⌄</span>
+     </button>
+     <div class="settings-panel" id="care-mode-panel" hidden>
+       <label class="sw"><input type="checkbox" id="calm-toggle"><span>Кожа раздражена</span></label>
+       <p class="note">Показывает щадящие шаги и подсказки. График адапалена и назначения не меняет.</p>
+     </div>
+   </section>
+   <section class="settings-card" id="appearance-card">
+     <button type="button" class="settings-card-trigger" aria-expanded="false" aria-controls="appearance-panel">
+       <span class="memo-heading"><strong>Оформление</strong><small>Светлая и тёмная темы</small></span>
+       <span class="memo-arrow" aria-hidden="true">⌄</span>
+     </button>
+     <div class="settings-panel" id="appearance-panel" hidden>
+       <label class="fld">Тема<select id="theme-select"><option value="system">Как в системе</option><option value="light">Светлая</option><option value="dark">Тёмная</option></select></label>
+     </div>
+   </section>
+   <section class="settings-card" id="reminders-card">
+     <button type="button" class="settings-card-trigger" aria-expanded="false" aria-controls="reminders-panel">
+       <span class="memo-heading"><strong>Напоминания</strong><small>Время ухода и уведомления</small></span>
+       <span class="memo-arrow" aria-hidden="true">⌄</span>
+     </button>
+     <div class="settings-panel" id="reminders-panel" hidden>
+       <div class="reminder-time"><label class="fchk"><input type="checkbox" id="rem-am"> Утренний уход</label><input class="reminder-clock" type="time" id="time-am" aria-label="Время утреннего ухода"></div>
+       <div class="reminder-time"><label class="fchk"><input type="checkbox" id="rem-pm"> Вечерний уход</label><input class="reminder-clock" type="time" id="time-pm" aria-label="Время вечернего ухода"></div>
+       <label class="fchk"><input type="checkbox" id="rem-expiry"> Срок использования</label>
+       <label class="fchk"><input type="checkbox" id="rem-low"> Средство заканчивается</label>
+       <p class="note">Напоминания видны только при открытом приложении.</p>
+       <div id="reminder-list" aria-live="polite"></div>
+     </div>
+   </section>`);
+ const settingAnimations=new WeakMap();
+ more.addEventListener('click',event=>{
+   const trigger=event.target.closest('.settings-card-trigger');if(!trigger||!more.contains(trigger))return;
+   const panel=document.getElementById(trigger.getAttribute('aria-controls'));
+   const opening=trigger.getAttribute('aria-expanded')!=='true';
+   const start=panel.hidden?0:panel.getBoundingClientRect().height;
+   settingAnimations.get(panel)?.cancel();
+   trigger.setAttribute('aria-expanded',String(opening));
+   if(opening)panel.hidden=false;
+   if(matchMedia('(prefers-reduced-motion: reduce)').matches){panel.hidden=!opening;settingAnimations.delete(panel);return}
+   const end=opening?panel.scrollHeight:0;
+   const animation=panel.animate([{height:start+'px',opacity:opening?0:1},{height:end+'px',opacity:opening?1:0}],{duration:240,easing:'ease-in-out'});
+   settingAnimations.set(panel,animation);
+   animation.onfinish=()=>{if(settingAnimations.get(panel)!==animation)return;if(!opening)panel.hidden=true;settingAnimations.delete(panel)};
+ });
  more.append(actions,editor,backup);
  const memo=more.querySelector('#care-memo');const memoContent=memo.querySelector('.memo-content');
  let memoExpanded=false,memoAnimation=null;
