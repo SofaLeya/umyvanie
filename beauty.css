@@ -149,3 +149,22 @@ dialog{width:min(94vw,520px);max-height:90vh;overflow:auto;border:1px solid var(
 
 .tabs button.on{background:var(--grad);color:#fff}
 .dot.half{background:linear-gradient(to top,var(--fuchsia) 50%,transparent 50%);border-color:var(--fuchsia)}
+/* Compact care memo at the top of More. The original recommendations stay intact. */
+.care-memo{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.care-memo summary{display:flex;align-items:center;gap:12px;min-height:70px;padding:12px 15px;list-style:none;cursor:pointer}
+.care-memo summary::-webkit-details-marker{display:none}
+.memo-heading{display:flex;flex:1;min-width:0;flex-direction:column;gap:2px}
+.memo-heading strong{font-size:.95rem;line-height:1.3;color:var(--fg)}
+.memo-heading small{font-size:.76rem;line-height:1.35;color:var(--muted)}
+.memo-arrow{display:grid;place-content:center;flex:none;width:30px;height:30px;border-radius:10px;background:var(--accent-soft);color:var(--accent);font-size:1.35rem;line-height:1;transition:transform .24s ease,background .24s ease}
+.care-memo[open] .memo-arrow{transform:rotate(180deg);background:var(--grad);color:#fff}
+.memo-content{display:flex;flex-direction:column;gap:13px;padding:0 15px 16px;border-top:1px solid var(--line);overflow:hidden}
+.memo-group{display:block;padding-top:12px}
+.memo-group+.memo-group{padding-top:0}
+.memo-group h3{margin:0 0 5px;font-size:.79rem;line-height:1.3;color:var(--accent)}
+.memo-group ul{display:flex;flex-direction:column;gap:6px;margin:0;padding-left:18px;color:var(--fg);font-size:.8rem;line-height:1.45;overflow-wrap:anywhere}
+.memo-group li{padding-left:2px}
+.memo-group li::marker{color:var(--orchid)}
+@media(max-width:350px){.care-memo summary{padding-inline:11px}.memo-content{padding-inline:11px}.memo-heading small{font-size:.72rem}}
+
+.care-memo.memo-closing .memo-arrow{transform:rotate(0);background:var(--accent-soft);color:var(--accent)}
