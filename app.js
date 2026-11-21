@@ -13,7 +13,7 @@
   const $ = id => document.getElementById(id);
 
   function load(k){ try{ return JSON.parse(localStorage.getItem(PREFIX+k)) || {}; }catch(e){ return {}; } }
-  function save(k,v){ try{ localStorage.setItem(PREFIX+k, JSON.stringify(v)); }catch(e){} }
+  function save(k,v){ if(migrationError)return; try{ localStorage.setItem(PREFIX+k, JSON.stringify(v)); }catch(e){} }
   function ui(k,v){ try{ if(v===undefined) return localStorage.getItem("skin-ui:"+k); localStorage.setItem("skin-ui:"+k, v); }catch(e){} }
   const DAYRE = /^skin:(\d{4}-\d{2}-\d{2})$/;
   function eachDay(fn){
@@ -54,6 +54,8 @@
   const ZONES = [["","без схемы"],["wash","всё лицо"],["full","лицо без глаз и губ"],["fullneck","лицо и шея"],["tzone","лоб и нос"],["cheeks","щёки и подбородок"],["split","лоб и нос + щёки отдельно"],["eyecream","веки"],["brows","брови"],["lashbrow","ресницы и брови"],["adapalene","лицо мимо глаз, губ, складок"],["neck","шея и декольте"]];
   const FIELDS = ["name","prod","next","notes","pao","opened","zone","opt","hidden","min"];
 
+  let migrationError = "";
+  try { SkinCore.migrate(localStorage, DEF); } catch(e) { migrationError = e.message; try{localStorage.setItem("skin2:safety:corrupt",JSON.stringify({app:"umyvanie",v:1,data:SkinCore.snapshot(localStorage)}))}catch(x){} }
   let cfg = loadCfg();
   function loadCfg(){ const c = load("cfg"); c.steps = c.steps||{}; c.custom = Array.isArray(c.custom)?c.custom:[]; c.order = c.order||{}; return c; }
   function saveCfg(){ save("cfg", cfg); }
@@ -287,6 +289,7 @@
 
     renderCal(n, rest, start);
     renderDiary();
+    if(window.Skin2 && Skin2.ready) Skin2.render();
   }
 
   // ---------- план адапалена ----------
@@ -455,10 +458,10 @@
   $("cal-prev").addEventListener("click",()=>{ calOffset--; render(); });
   $("cal-next").addEventListener("click",()=>{ if(calOffset<1){ calOffset++; render(); } });
   $("cal-tabs").addEventListener("click", e=>{ const b = e.target.closest("[data-m]"); if(!b) return; calMode = b.dataset.m; ui("calMode", calMode); render(); });
-  $("reset").addEventListener("click", ()=>{ state = {}; save(today,state); render(); });
+  $("reset").addEventListener("click", async ()=>{ await Skin2.safety(); state = {}; save(today,state); render(); });
   const rs = $("restart");
-  rs.addEventListener("click", ()=>{
-    if(rs.dataset.armed){ try{ localStorage.setItem(PREFIX+"reset", today); }catch(e){} delete rs.dataset.armed; rs.textContent="Начать курс заново"; render(); return; }
+  rs.addEventListener("click", async ()=>{
+    if(rs.dataset.armed){ await Skin2.safety(); try{ localStorage.setItem(PREFIX+"reset", today); }catch(e){} delete rs.dataset.armed; rs.textContent="Начать курс заново"; render(); return; }
     rs.dataset.armed="1"; rs.textContent="Точно? Нажми ещё раз";
     setTimeout(()=>{ delete rs.dataset.armed; rs.textContent="Начать курс заново"; }, 4000);
   });
@@ -582,32 +585,17 @@
     try{ if(window.YDS) YDS.init({app:"umyvanie",title:"Уход",cid:"02760b58a041462481b0b3fd09c33d7b",redir:"https://sofaleya.github.io/umyvanie/",prefix:PREFIX,exclude:[PREFIX+"lastBackup"],accent:"#ff4fa0",accentText:"#fff"}); }catch(e){}
     try{ if(window.TGBK) TGBK.init({app:"umyvanie",title:"Уход",accent:"var(--accent)",accentText:"var(--bg)",
       file:d=>"uhod-kopiya-"+d+".json",
-      data:()=>{ const data=collect(); return Object.keys(data).length? JSON.stringify({app:"umyvanie",v:1,data},null,1) : ""; }}); }catch(e){}
-    $("bk-save").addEventListener("click",()=>{
-      const data=collect();
-      const blob=new Blob([JSON.stringify({app:"umyvanie",v:1,saved:new Date().toISOString(),data},null,1)],{type:"application/json"});
-      const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="uhod-kopiya-"+today+".json";
-      document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
-      try{ localStorage.setItem(PREFIX+"lastBackup", new Date().toISOString()); }catch(e){}
-      stamp();
-    });
-    $("bk-file").addEventListener("change",e=>{
-      const f=e.target.files[0]; if(!f) return;
-      const r=new FileReader();
-      r.onload=()=>{
-        try{
-          const j=JSON.parse(r.result);
-          if(j.app!=="umyvanie" || !j.data) throw 0;
-          Object.entries(j.data).forEach(([k,v])=>{ if(k.startsWith(PREFIX)) localStorage.setItem(k,v); });
-          state=load(today); cfg=loadCfg(); buildLists(); buildEditor(); render();
-          st.textContent="Готово, восстановлено записей: "+Object.keys(j.data).length+".";
-        }catch(err){ st.textContent="Этот файл не подходит. Выбери файл копии, который скачивала с этой странички."; }
-        e.target.value="";
-      };
-      r.readAsText(f);
+      data:async()=>{ const data=collect(); return Object.keys(data).length? JSON.stringify({app:"umyvanie",v:2,data,photos:await Skin2.photosExport()},null,1) : ""; }}); }catch(e){}
+    $("bk-save").addEventListener("click",()=>Skin2.exportBackup());
+    $("bk-file").addEventListener("change",async e=>{
+      const f=e.target.files[0]; if(!f)return;
+      try { await Skin2.importBackup(JSON.parse(await f.text())); }
+      catch(err){ st.textContent="Ошибка восстановления: "+err.message; }
+      e.target.value="";
     });
     stamp();
   })();
 
   buildLists(); buildEditor(); render();
+  Skin2.init({DEF,eff,order,get cfg(){return cfg},get state(){return state},get today(){return today},get sel(){return sel},select(k){sel=k;calOffset=(new Date(k+"T12:00:00").getFullYear()-new Date().getFullYear())*12+new Date(k+"T12:00:00").getMonth()-new Date().getMonth();render();},saveCfg,buildLists,buildEditor,render,reload(){cfg=loadCfg();state=load(today);buildLists();buildEditor();render()},clearMigrationError(){migrationError=""},migrationError});
 })();

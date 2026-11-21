@@ -1,0 +1,32 @@
+/* Pure data rules shared by the browser and tests. Legacy skin:* keys remain in place. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.SkinCore=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
+'use strict';
+const VERSION=2, prefix='skin:', day=/^skin:\d{4}-\d{2}-\d{2}$/;
+const clone=x=>JSON.parse(JSON.stringify(x));
+function parse(raw,fallback){if(raw==null)return fallback;try{return JSON.parse(raw)}catch{return fallback}}
+function snapshot(store){const out={};for(let i=0;i<store.length;i++){const k=store.key(i);if(k&&k.startsWith(prefix)&&k!=='skin:lastBackup')out[k]=store.getItem(k)}return out}
+function validBackup(j){if(!j||j.app!=='umyvanie'||![1,2].includes(j.v)||!j.data||typeof j.data!=='object'||Array.isArray(j.data))throw Error('Неверный формат копии');const data={};for(const [k,v] of Object.entries(j.data)){if(!k.startsWith(prefix)||typeof v!=='string')throw Error('Недопустимый ключ или значение');if(k==='skin:cfg'||k==='skin:products'||k.startsWith('skin:diary:')||day.test(k)){const p=parse(v,null);if(!p||typeof p!=='object'||(k==='skin:products'?!Array.isArray(p):Array.isArray(p)))throw Error('Повреждённые данные: '+k)}data[k]=v}return data}
+function splitProducts(value){return String(value||'').split(/\s*,\s*/).map(s=>s.replace(/\s+на\s+(лоб|нос|щёки|подбородок|всё лицо|лицо).*/i,'').trim()).filter(Boolean)}
+function keyFor(name){return name.toLocaleLowerCase('ru').replace(/\s+/g,' ').trim()}
+function productId(name){let h=2166136261;for(const c of keyFor(name)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return 'p'+(h>>>0).toString(36)}
+function category(step){const s=(step.name+' '+(step.zone||'')).toLowerCase();if(/spf/.test(s))return 'SPF';if(/сыворот/.test(s))return 'Сыворотка';if(/умы|мицел|wash/.test(s))return 'Очищение';if(/адапал|дифферин/.test(s))return 'Адапален';if(/глаз|век|eye/.test(s))return 'Для глаз';if(/крем/.test(s))return 'Крем';return 'Другое'}
+function migrate(store,defaults){const old=Number(store.getItem('skin:schemaVersion')||0);if(old>=VERSION)return {changed:false,products:parse(store.getItem('skin:products'),[])};
+ const snap=snapshot(store), cfg=parse(store.getItem('skin:cfg'),null);if(store.getItem('skin:cfg')&&!cfg)throw Error('Повреждённые настройки: миграция остановлена');
+ const existing=parse(store.getItem('skin:products'),[]);if(!Array.isArray(existing))throw Error('Повреждённая косметичка');
+ const products=clone(existing), byName=new Map(products.map(p=>[keyFor(p.name),p]));
+ const safeCfg=cfg||{};const steps=defaults.map(d=>Object.assign({},d,(safeCfg.steps||{})[d.id]||{})).concat(Array.isArray(safeCfg.custom)?safeCfg.custom:[]);
+ for(const step of steps){for(const [field,status] of [['prod','using'],['next','planned']])for(const name of splitProducts(step[field])){
+  let p=byName.get(keyFor(name));if(!p){p={id:productId(name),name,brand:name.split(/\s+/)[0],category:category(step),opened:status==='using'?step.opened||'':'',pao:status==='using'?Number(step.pao)||0:0,remaining:'',status,shop:'',stepIds:[]};products.push(p);byName.set(keyFor(name),p)}
+  if(status==='using'&&p.status==='planned')p.status='using';if(!p.stepIds.includes(step.id))p.stepIds.push(step.id);
+ }}
+ // Write the safety snapshot first. Leave every legacy key untouched.
+ store.setItem('skin2:safety:migration',JSON.stringify({app:'umyvanie',v:1,data:snap,saved:new Date().toISOString()}));
+ store.setItem('skin:products',JSON.stringify(products));store.setItem('skin:schemaVersion',String(VERSION));return {changed:true,products};}
+function reconcileProducts(store,defaults){const cfg=parse(store.getItem('skin:cfg'),{})||{},products=parse(store.getItem('skin:products'),[]);if(!Array.isArray(products))throw Error('Повреждённая косметичка');const byName=new Map(products.map(p=>[keyFor(p.name),p]));const steps=defaults.map(d=>Object.assign({},d,(cfg.steps||{})[d.id]||{})).concat(Array.isArray(cfg.custom)?cfg.custom:[]);let changed=false;for(const step of steps)for(const [field,status] of [['prod','using'],['next','planned']])for(const name of splitProducts(step[field])){let p=byName.get(keyFor(name));if(!p){p={id:productId(name),name,brand:name.split(/\s+/)[0],category:category(step),opened:status==='using'?step.opened||'':'',pao:status==='using'?Number(step.pao)||0:0,remaining:'',status,shop:'',stepIds:[]};products.push(p);byName.set(keyFor(name),p);changed=true}if(status==='using'&&p.status==='planned'){p.status='using';changed=true}if(!p.stepIds.includes(step.id)){p.stepIds.push(step.id);changed=true}}if(changed)store.setItem('skin:products',JSON.stringify(products));return products}
+function mergeData(local,incoming){const out={...local},conflicts=[];for(const [k,v] of Object.entries(incoming)){if(!(k in out)){out[k]=v;continue}if(out[k]===v)continue;
+ if(k==='skin:products'){const a=parse(out[k],[]),b=parse(v,[]);if(Array.isArray(a)&&Array.isArray(b)){const map=new Map(a.map(p=>[p.id,p]));for(const p of b){if(!map.has(p.id))map.set(p.id,p);else if(JSON.stringify(map.get(p.id))!==JSON.stringify(p))conflicts.push(k+' / '+p.name)}out[k]=JSON.stringify([...map.values()]);continue}}
+ if(day.test(k)||k.startsWith('skin:diary:')){const a=parse(out[k],{}),b=parse(v,{});if(a&&b&&typeof a==='object'&&typeof b==='object'){for(const [f,x] of Object.entries(b)){if(!(f in a))a[f]=x;else if(JSON.stringify(a[f])!==JSON.stringify(x))conflicts.push(k+' / '+f)}out[k]=JSON.stringify(a);continue}}
+ conflicts.push(k)}return {data:out,conflicts}}
+function analytics(store,now,range){const dates=[],points=[];let applied=0,done=0,possible=0,careDays=0;for(let i=range-1;i>=0;i--){const d=new Date(now+'T12:00:00');d.setDate(d.getDate()-i);const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const skin=parse(store.getItem('skin:diary:'+k),{}),care=parse(store.getItem('skin:'+k),{});dates.push(k);if(skin&&skin.s)points.push({date:k,score:skin.s,irritation:(skin.t||[]).some(t=>['покраснение','жжение','стянуто'].includes(t))?1:0,peeling:(skin.t||[]).includes('шелушится')?1:0});if(care&&care['pm-adapalene'])applied++;if(care&&Object.keys(care).some(x=>!x.startsWith('_'))){careDays++;possible+=2;done+=Number(!!care._am)+Number(!!care._pm)}}return {dates,points,applied,careDays,adapaleneFrequency:careDays?Math.round(applied/careDays*100):null,completion:possible?Math.round(done/possible*100):null}}
+return {VERSION,snapshot,validBackup,splitProducts,productId,migrate,reconcileProducts,mergeData,analytics};
+});
