@@ -183,3 +183,17 @@ dialog{width:min(94vw,520px);max-height:90vh;overflow:auto;border:1px solid var(
 #reminder-list{font-size:.8rem}
 #reminder-list .note{margin:0}
 @media(max-width:350px){.settings-card-trigger{padding-inline:11px}.settings-panel{padding-inline:11px}.reminder-clock{width:100px}}
+/* One compact settings menu with the existing controls and editor moved inside. */
+.settings-root>.settings-card-trigger{min-height:72px}
+.settings-root>.settings-panel{gap:8px;padding:10px;background:var(--bg)}
+.settings-root>.settings-panel>.settings-card{box-shadow:none}
+#steps-panel{padding:0}
+#steps-panel>.backup{background:transparent;border:0;border-radius:0;box-shadow:none;padding:11px 13px}
+#steps-panel .edbox>summary{display:none}
+#steps-panel .edbox[open] .ed{margin-top:10px}
+.reset-data{display:flex;flex-direction:column;gap:9px;padding:14px 15px;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.reset-data h3{margin:0;font-size:.95rem;color:var(--warn)}
+.reset-data p{margin:0;color:var(--muted);font-size:.78rem;line-height:1.4}
+.reset-data .btns{gap:8px}
+.reset-data .reset{min-height:42px;text-align:left}
+@media(max-width:350px){.settings-root>.settings-panel{padding:8px}.reset-data{padding:11px}}

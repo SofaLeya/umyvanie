@@ -458,12 +458,15 @@
   $("cal-prev").addEventListener("click",()=>{ calOffset--; render(); });
   $("cal-next").addEventListener("click",()=>{ if(calOffset<1){ calOffset++; render(); } });
   $("cal-tabs").addEventListener("click", e=>{ const b = e.target.closest("[data-m]"); if(!b) return; calMode = b.dataset.m; ui("calMode", calMode); render(); });
-  $("reset").addEventListener("click", async ()=>{ await Skin2.safety(); state = {}; save(today,state); render(); });
-  const rs = $("restart");
-  rs.addEventListener("click", async ()=>{
-    if(rs.dataset.armed){ await Skin2.safety(); try{ localStorage.setItem(PREFIX+"reset", today); }catch(e){} delete rs.dataset.armed; rs.textContent="Начать курс заново"; render(); return; }
-    rs.dataset.armed="1"; rs.textContent="Точно? Нажми ещё раз";
-    setTimeout(()=>{ delete rs.dataset.armed; rs.textContent="Начать курс заново"; }, 4000);
+  $("reset").addEventListener("click", async ()=>{
+    if(!confirm("Снять все галочки за сегодня? Отметки других дней и записи дневника останутся.")) return;
+    await Skin2.safety(); state = {}; save(today,state); render();
+  });
+  $("restart").addEventListener("click", async ()=>{
+    if(!confirm("Начать курс адапалена заново? Старые отметки и дневник сохранятся, но перестанут учитываться для начала курса.")) return;
+    await Skin2.safety();
+    try{ localStorage.setItem(PREFIX+"reset", today); }catch(e){}
+    render();
   });
   document.addEventListener("visibilitychange", ()=>{
     if(document.visibilityState==="visible"){ syncDay(); render(); if(Object.keys(timers).length) wakeOn(); }
