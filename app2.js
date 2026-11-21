@@ -76,6 +76,19 @@ function mount(){const wrap=document.querySelector('.wrap'), children=[...wrap.c
    animation.onfinish=()=>{if(settingAnimations.get(panel)!==animation)return;if(!opening)panel.hidden=true;settingAnimations.delete(panel)};
  });
  more.append(actions,editor,backup);
+ const allSettings=document.createElement('section');
+ allSettings.id='all-settings-card';allSettings.className='settings-card settings-root';
+ allSettings.innerHTML='<button type="button" class="settings-card-trigger" aria-expanded="false" aria-controls="all-settings-panel"><span class="memo-heading"><strong>Настройки</strong><small>Уход, шаги, оформление и напоминания</small></span><span class="memo-arrow" aria-hidden="true">⌄</span></button><div class="settings-panel" id="all-settings-panel" hidden></div>';
+ more.insertBefore(allSettings,more.querySelector('#care-mode-card'));
+ const stepsCard=document.createElement('section');stepsCard.id='steps-card';stepsCard.className='settings-card';
+ stepsCard.innerHTML='<button type="button" class="settings-card-trigger" aria-expanded="false" aria-controls="steps-panel"><span class="memo-heading"><strong>Настроить шаги</strong><small>Утро, вечер и порядок процедур</small></span><span class="memo-arrow" aria-hidden="true">⌄</span></button><div class="settings-panel" id="steps-panel" hidden></div>';
+ stepsCard.querySelector('#steps-panel').append(editor);
+ editor.querySelector('.edbox').open=true;
+ more.querySelector('#care-mode-panel').append(settings.querySelector('#sws'));
+ settings.remove();
+ allSettings.querySelector('#all-settings-panel').append(more.querySelector('#care-mode-card'),stepsCard,more.querySelector('#appearance-card'),more.querySelector('#reminders-card'));
+ const resetData=document.createElement('section');resetData.className='reset-data';resetData.innerHTML='<h3>Сброс данных</h3><p>Эти действия меняют отметки или отсчёт курса. Перед изменением сохраняется локальная копия.</p>';
+ resetData.append(actions);more.append(resetData);
  const memo=more.querySelector('#care-memo');const memoContent=memo.querySelector('.memo-content');
  let memoExpanded=false,memoAnimation=null;
  memo.querySelector('summary').addEventListener('click',event=>{
