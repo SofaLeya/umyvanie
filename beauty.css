@@ -39,7 +39,7 @@ header{padding:0 2px 2px;gap:0}
 h1{font:400 1.55rem/1.2 var(--display);color:var(--fg);background:none}
 .date{font-size:.8rem;text-transform:capitalize;color:var(--muted)}
 .ydsync-badge{margin-left:auto;border:1px solid var(--line);border-radius:999px;padding:4px 8px;font-size:.68rem;max-width:110px;overflow:hidden;text-overflow:ellipsis}
-.phase,.track,.backup,.product-card,.care-overview,.period-card,.care-settings{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.phase,.track,.backup,.product-card,.care-overview,.care-settings{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
 .phase{padding:0;border:0;border-radius:0;background:none;box-shadow:none;gap:3px}
 .phase .big{font-size:.87rem;line-height:1.25}
 .phase .note{font-size:.76rem;line-height:1.35;color:var(--muted);opacity:1}
@@ -56,10 +56,11 @@ h1{font:400 1.55rem/1.2 var(--display);color:var(--fg);background:none}
 .hero-card progress::-moz-progress-bar{background:#fff;border-radius:999px}
 .hero-bottom{font-size:.75rem;min-height:30px}
 .hero-bottom button{flex:none;min-height:36px;padding:5px 10px;border:1px solid rgba(255,255,255,.75);border-radius:10px;background:rgba(49,17,76,.2);color:#fff;font-weight:700;font-size:.75rem;cursor:pointer}
-.period-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-.period-card{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:10px 12px;min-height:58px;color:var(--fg);text-align:left}
-.period-card span{font-size:.85rem;font-weight:600}
-.period-card strong{font-size:1rem;color:var(--accent);font-variant-numeric:tabular-nums;white-space:nowrap}
+.hero-periods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:3px 0 1px}
+.hero-period{display:flex;align-items:center;justify-content:space-between;gap:5px;min-width:0;padding:7px 9px;border:1px solid rgba(255,255,255,.35);border-radius:11px;background:rgba(255,255,255,.15);color:#fff}
+.hero-period span{font-size:.76rem;white-space:nowrap}
+.hero-period strong{font-size:.82rem;color:#fff;white-space:nowrap}
+@media(max-width:350px){.hero-period{padding-inline:7px}.hero-period span{font-size:.72rem}}
 .care-overview{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:10px;padding:12px 14px}
 .skin-today{display:flex;flex-direction:column;gap:2px;min-width:0}
 .skin-today>span{font-size:.72rem;color:var(--muted)}
