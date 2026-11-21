@@ -147,8 +147,8 @@
           '<div class="row"><label class="step"><input type="checkbox" id="'+esc(id)+'" data-g="'+g+'"'+(e.opt?' data-opt="1"':'')+'>'
           +'<span class="txt"><span class="name"><span class="nm">'+esc(e.name)+'</span>'+(e.opt?' <span class="tag">необяз.</span>':'')+'<span class="tag exp" hidden>срок</span></span>'
           +'<span class="prod">'+esc(e.prod||"")+'</span>'
-          +(hasMore?'<button type="button" class="where" aria-expanded="false">Подробнее</button>':'')
           +'</span></label>'
+          +(hasMore?'<button type="button" class="where" aria-expanded="false" aria-label="Подробности: '+esc(e.name)+'"><span aria-hidden="true">⌄</span></button>':'')
           +(wait?'<button class="timer" type="button" data-for="'+esc(id)+'" data-min="'+(+e.min||5)+'"></button>':'')
           +'</div>'
           +'<div class="more" hidden>'

@@ -1,0 +1,23 @@
+const {chromium}=require('@playwright/test');
+const fs=require('node:fs');
+(async()=>{
+  fs.mkdirSync('screenshots',{recursive:true});
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||undefined});
+  const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:1});
+  const page=await context.newPage();
+  await page.clock.install({time:new Date('2026-11-21T08:00:00')});
+  await page.goto(process.env.SCREENSHOT_URL||'http://127.0.0.1:4173');
+  await page.locator('.bottom-nav').waitFor();
+  await page.screenshot({path:'screenshots/home-light.png'});
+  await page.locator('#ol-am').evaluate(x=>x.scrollIntoView({block:'start'}));
+  await page.screenshot({path:'screenshots/compact-list.png'});
+  await page.locator('.bottom-nav [data-tab=more]').click();
+  await page.locator('#theme-select').selectOption('dark');
+  await page.locator('.bottom-nav [data-tab=today]').click();
+  await page.evaluate(()=>scrollTo(0,0));
+  await page.screenshot({path:'screenshots/home-dark.png'});
+  await page.locator('#all-am').click();
+  await page.evaluate(()=>scrollTo(0,0));
+  await page.screenshot({path:'screenshots/completed-care.png'});
+  await browser.close();
+})().catch(error=>{console.error(error);process.exit(1)});
