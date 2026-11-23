@@ -216,3 +216,37 @@ dialog{width:min(94vw,520px);max-height:90vh;overflow:auto;border:1px solid var(
 #photo-viewer[open]{display:grid}#photo-viewer img{max-width:100vw;max-height:100dvh;object-fit:contain}
 #photo-viewer [data-close]{position:absolute;top:max(12px,env(safe-area-inset-top));right:12px;z-index:1;width:44px;height:44px;border:0;border-radius:50%;background:#27212f;color:#fff;font-size:1.7rem;cursor:pointer}
 @media(max-width:350px){.product-gallery{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* Compact product editor: all optional fields stay mounted when collapsed. */
+#product-dialog{width:min(calc(100vw - 16px),540px);padding:14px;max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 16px);scroll-padding-bottom:75px}
+#product-form{gap:7px;min-width:0}
+#product-form h2{font-size:1.25rem}
+.product-main,.product-extra-body{display:flex;flex-direction:column;gap:6px;min-width:0}
+.product-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;min-width:0}
+#product-form .fld{min-width:0;overflow-wrap:anywhere}
+#product-form .fld input,#product-form .fld select,#product-form .fld textarea{width:100%;min-width:0;box-sizing:border-box}
+#product-form .fld small{display:block;font-size:.68rem;color:var(--muted);line-height:1.3}
+#product-form textarea{resize:vertical}
+.photo-head{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.product-gallery>.note{grid-column:1/-1;margin:0;line-height:1.4}
+.product-extra{border:1px solid var(--line);border-radius:12px;padding:8px;background:var(--bg)}
+.product-extra summary{cursor:pointer;color:var(--accent);font-size:.84rem;font-weight:700;min-height:28px}
+.product-extra-body{padding-top:10px}
+.product-duplicate{padding:9px;border:1px solid var(--accent);border-radius:10px;background:var(--accent-soft);font-size:.78rem}
+.product-duplicate[hidden]{display:none}
+.ocr-date{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px;border:1px solid var(--line);border-radius:9px;min-width:0}
+.ocr-date>span{grid-column:1/-1;overflow-wrap:anywhere}.ocr-date small{display:block;color:var(--muted)}
+.ocr-date label{min-width:0}.ocr-date select{width:100%;min-width:0}
+#product-form>.product-save{position:sticky;bottom:-14px;margin:0 -14px -14px;padding:8px 14px calc(8px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -5px 12px #0002}
+@media(max-width:350px){#product-dialog{padding:10px}#product-form>.product-save{bottom:-10px;margin:0 -10px -10px;padding-inline:10px}}
+
+/* Keep the gallery entry short before photos are added, with usable touch targets. */
+#product-gallery:empty,#photo-message:empty{display:none}
+#product-form .fld{font-size:.78rem;line-height:1.3}
+#product-form .fld input,#product-form .fld select{min-height:42px}
+#product-form .fld textarea{font-size:16px}
+#product-form .photo-editor{padding:8px;gap:6px}
+#product-form .photo-editor .fld{margin:0}
+#product-form .photo-editor #ocr-start{align-self:flex-start;min-height:42px}
+#product-form .product-extra summary{min-height:40px;display:flex;align-items:center}
+#product-form .ocr-option{min-height:42px;align-items:center}
+@media(max-width:350px){#product-form .product-fields{gap:5px}#product-form .fld{font-size:.75rem}}

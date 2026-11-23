@@ -1,4 +1,4 @@
-const CACHE='uhod-v2-2-smart-bag';
+const CACHE='uhod-v2-4-photo-text';
 const ASSETS=['./','index.html','beauty.css','core.js','smart-bag.js','gallery.js','smart-ui.js','vendor/ocr/tesseract.min.js','app2.js','app.js','ydsync.js','tgbk.js','manifest.webmanifest','face.png','icon-192.png','icon-512.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('uhod-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
