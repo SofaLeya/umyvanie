@@ -588,11 +588,11 @@
     try{ if(window.YDS) YDS.init({app:"umyvanie",title:"Уход",cid:"02760b58a041462481b0b3fd09c33d7b",redir:"https://sofaleya.github.io/umyvanie/",prefix:PREFIX,exclude:[PREFIX+"lastBackup"],accent:"#ff4fa0",accentText:"#fff"}); }catch(e){}
     try{ if(window.TGBK) TGBK.init({app:"umyvanie",title:"Уход",accent:"var(--accent)",accentText:"var(--bg)",
       file:d=>"uhod-kopiya-"+d+".json",
-      data:async()=>{ const data=collect(); return Object.keys(data).length? JSON.stringify({app:"umyvanie",v:2,data,photos:await Skin2.photosExport()},null,1) : ""; }}); }catch(e){}
-    $("bk-save").addEventListener("click",()=>Skin2.exportBackup());
+      data:async()=>{ const data=collect(); if(!Object.keys(data).length)return "";const payload=JSON.stringify({app:"umyvanie",v:2,data,photos:await Skin2.photosExport()});if(payload.length>24*1024*1024)throw Error('Копия больше 24 МБ. Уменьши фотографии.');return payload; }}); }catch(e){}
+    $("bk-save").addEventListener("click",()=>Skin2.exportBackup().catch(error=>alert('Не удалось создать копию: '+error.message)));
     $("bk-file").addEventListener("change",async e=>{
       const f=e.target.files[0]; if(!f)return;
-      try { await Skin2.importBackup(JSON.parse(await f.text())); }
+      try { if(f.size>24*1024*1024)throw Error('Копия больше 24 МБ. Уменьши фотографии.');await Skin2.importBackup(JSON.parse(await f.text())); }
       catch(err){ st.textContent="Ошибка восстановления: "+err.message; }
       e.target.value="";
     });

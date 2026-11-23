@@ -77,7 +77,7 @@
   function enc(o){var m={};Object.keys(o).forEach(function(k){var v=o[k];m[k]=(m3obj(v)&&Object.keys(v).length===1&&typeof v.__raw==='string')?v.__raw:JSON.stringify(v)});return m}
   function baseGet(){try{var t=localStorage.getItem('yds-base:'+C.app);return t?JSON.parse(t):undefined}catch(e){return undefined}}
   function baseSet(map){applying=true;try{localStorage.setItem('yds-base:'+C.app,JSON.stringify(map))}catch(e){}applying=false}
-  function pack(d,photos){return JSON.stringify({app:C.app,v:2,savedAt:Date.now(),dev:get().dev,data:d||collect(),photos:photos||{}})}
+  function pack(d,photos){var payload=JSON.stringify({app:C.app,v:2,savedAt:Date.now(),dev:get().dev,data:d||collect(),photos:photos||{}});if(payload.length>24*1024*1024)throw Error('Облачная копия больше 24 МБ. Уменьши фотографии перед синхронизацией.');return payload}
   function cloudSafety(){try{localStorage.setItem('skin2:safety:cloud',JSON.stringify({app:C.app,v:2,saved:new Date().toISOString(),data:collect()}))}catch(e){throw Error('Не удалось создать локальную копию перед синхронизацией')}}
   function writeAll(map){cloudSafety();applying=true;
     try{var cur=collect();Object.keys(cur).forEach(function(k){if(!(k in map))_rem.call(localStorage,k)});
@@ -89,7 +89,7 @@
     try{sessionStorage.setItem('yds-note','Подтянула данные из Яндекс Диска')}catch(e){}
     (leaving=true,location.reload());
   }
-  function errText(e){if(e&&e.code)return e.code==='bad'?'файл в Диске повреждён':'код '+e.code;return 'нет связи с Яндексом'+(e&&e.message?' ('+e.message+')':'')}
+  function errText(e){if(e&&e.code)return e.code==='bad'?'файл в Диске повреждён':'код '+e.code;if(e&&/больше 24 МБ/.test(e.message||''))return e.message;return 'нет связи с Яндексом'+(e&&e.message?' ('+e.message+')':'')}
   async function sync(){
     if(!on())return;if(busy){again=true;return}
     busy=true;st='wait';paint();
