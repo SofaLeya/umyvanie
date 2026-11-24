@@ -11,7 +11,7 @@ function mount(){const wrap=document.querySelector('.wrap'), children=[...wrap.c
  const root=document.createElement('main');root.id='screens';wrap.appendChild(root);
  const mk=(name,title)=>{const x=document.createElement('div');x.dataset.screen=name;x.className='screen';x.innerHTML='<h2 class="screen-title">'+title+'</h2>';root.appendChild(x);return x};
  const today=mk('today','Сегодня'),calendar=mk('calendar','Календарь'),analysis=mk('analysis','Анализ'),bag=mk('bag','Косметичка'),more=mk('more','Ещё');
- header.querySelector('h1').textContent='Мой уход';
+ header.querySelector('h1').textContent='Бьюти рутина';
  const hero=document.createElement('section');hero.id='today-summary';hero.className='hero-card';
  const overview=document.createElement('section');overview.id='care-overview';overview.className='care-overview';
  overview.innerHTML='<div class="skin-today"><span>Кожа сегодня</span><strong id="skin-today-status">Нет записи</strong><span id="calm-indicator" class="calm-indicator" hidden>Кожа раздражена</span><button type="button" class="mini" id="open-diary">Дневник →</button></div>';
