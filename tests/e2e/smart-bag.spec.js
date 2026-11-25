@@ -19,3 +19,34 @@ test('matching full product offers attach; same brand does not merge different n
 test('unlabelled date requires kind and format selection; collapsed fields keep values',async({page})=>{await bag(page);await page.locator('#product-add').click();await page.locator('[name=name]').fill('Наклейка');await page.locator('#product-extra summary').click();await page.locator('[name=notes]').fill('Сохрани мой текст');await page.locator('#product-extra summary').click();await page.evaluate(()=>SmartUI.showResults(SmartBag.parseOcr('07 04 2026','Фото 1')));await expect(page.locator('[name=ocr-date-kind-0]')).toHaveValue('');await page.locator('[name=ocr-date-value-0]').selectOption('2026-07-04');await page.locator('[name=ocr-date-kind-0]').selectOption('manufactured');await page.locator('[data-ocr=confirm]').click();await page.locator('#product-extra summary').click();await expect(page.locator('[name=manufactured]')).toHaveValue('2026-07-04');await expect(page.locator('[name=notes]')).toHaveValue('Сохрани мой текст')});
 for(const width of [320,390])test(`compact product editor ${width}px and keyboard-sized viewport`,async({page})=>{await page.setViewportSize({width,height:560});await bag(page);await page.locator('#product-add').click();await page.locator('[name=name]').focus();await expect(page.locator('#product-form .product-save')).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);const box=await page.locator('#product-dialog').boundingBox();expect(box.x).toBeGreaterThanOrEqual(0);expect(box.x+box.width).toBeLessThanOrEqual(width+1);await page.locator('#product-extra summary').click();await page.locator('[name=notes]').fill('Введённое значение');await page.locator('#product-extra summary').click();await page.locator('#product-extra summary').click();await expect(page.locator('[name=notes]')).toHaveValue('Введённое значение')});
 test('OCR review fills optional label text only after confirmation and saves manual correction',async({page})=>{await bag(page);await page.locator('#product-add').click();await page.locator('[name=name]').fill('Тестовое средство');await page.evaluate(()=>SmartUI.showResults(SmartBag.parseOcr('Состав/INCI: Aqua, Glycerin, Panthenol\nСпособ применения: нанести на влажную кожу и смыть водой\nНазначение: очищение кожи лица\n06 2026\n30 месяцев','Фото 2')));await expect(page.locator('[name=ingredients]')).toHaveValue('');await page.locator('[name=ocr-ingredients]').first().check();await page.locator('[name=ocr-usage]').first().check();await page.locator('[name=ocr-purposes]').first().check();await page.locator('[name=ocr-duration-kind-0]').selectOption('shelfMonths');await page.locator('[data-ocr=confirm]').click();await expect(page.locator('#product-extra')).toHaveAttribute('open','');await page.locator('[name=ingredients]').fill('Aqua, Glycerin — проверено вручную');await page.locator('#product-extra summary').click();await page.locator('#product-form button[value=save]').click();await page.reload();await bag(page);await page.locator('.product-card:has-text("Тестовое средство") [data-action=edit]').click();await page.locator('#product-extra summary').click();await expect(page.locator('[name=ingredients]')).toHaveValue('Aqua, Glycerin — проверено вручную');await expect(page.locator('[name=usage]')).toHaveValue(/нанести на влажную кожу/);await expect(page.locator('[name=purpose]')).toHaveValue('очищение кожи лица');await expect(page.locator('[name=shelfMonths]')).toHaveValue('30')});
+
+
+test('archive hides product by default and restores previous status without data loss',async({page})=>{
+ await bag(page);
+ await page.locator('#product-add').click();
+ await page.locator('[name=name]').fill('Архивный тестовый крем');
+ await page.locator('#product-extra summary').click();
+ await page.locator('[name=status]').selectOption('spare');
+ await page.locator('[name=notes]').fill('Сохранить заметку');
+ await page.locator('#product-photo-input').setInputFiles(file(1));
+ await expect(page.locator('#photo-count')).toHaveText('1 / 5');
+ await page.locator('#product-form button[value=save]').click();
+ const card=page.locator('.product-card:has-text("Архивный тестовый крем")');
+ await expect(card).toContainText('Запас');
+ await card.locator('[data-action=archive]').click();
+ await expect(card).toHaveCount(0);
+ await page.reload();
+ await page.locator('.bottom-nav [data-tab=bag]').click();
+ await expect(card).toHaveCount(0);
+ await page.locator('#product-filter').selectOption('archive');
+ await expect(card).toContainText('Архив');
+ await expect(card.locator('[data-action=restore]')).toHaveText('Из архива');
+ await card.locator('[data-action=restore]').click();
+ await expect(card).toHaveCount(0);
+ await page.locator('#product-filter').selectOption('active');
+ await expect(card).toContainText('Запас');
+ await card.locator('[data-action=edit]').click();
+ await expect(page.locator('#photo-count')).toHaveText('1 / 5');
+ await page.locator('#product-extra summary').click();
+ await expect(page.locator('[name=notes]')).toHaveValue('Сохранить заметку');
+});
